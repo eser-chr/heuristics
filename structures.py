@@ -1,39 +1,38 @@
 from dataclasses import dataclass
+from abc import ABC
+from copy import copy, deepcopy
 import numpy as np
 from numpy.typing import NDArray
 import math
-from typing import List, Union
+from typing import Iterator, List, Union, Tuple, Set, Dict
 from pathlib import Path
+
 
 @dataclass
 class Instance:
-    name:str
-    n: int              # number of requests
-    nK: int             # number of vehicles
-    C: int              # vehicle capacity
-    gamma: int          # min number of served requests
-    rho: float          # fairness weight
+    name: str
+    n: int  # number of requests
+    nK: int  # number of vehicles
+    C: int  # vehicle capacity
+    gamma: int  # min number of served requests
+    rho: float  # fairness weight
 
-    demands: NDArray    # shape (n,), demand per request i (1..n) at i-1
-    coords: NDArray     # shape (1 + 2n, 2), coords[node_idx] = (x, y)
-    dist: NDArray       # shape (1 + 2n, 1 + 2n), int travel distances
+    demands: NDArray  # shape (n,), demand per request i (1..n) at i-1
+    coords: NDArray  # shape (1 + 2n, 2), coords[node_idx] = (x, y)
+    dist: NDArray  # shape (1 + 2n, 1 + 2n), int travel distances
 
     request_of_node: NDArray  # shape (1+2n,) -> request index [0..n-1] or -1
-    load_change: NDArray      # shape (1+2n,), +c_i at pickup, -c_i at drop
+    load_change: NDArray  # shape (1+2n,), +c_i at pickup, -c_i at drop
 
 
-Route = List[int]   # list of location indices in [1, 2n], depot implicit
+Route = List[int]  # list of location indices in [1, 2n], depot implicit
+
 
 @dataclass
 class Solution:
     routes: List[Route]  # length = nK, allow empty routes
 
-
-    def write_solution(
-        self, 
-        path: Union[str, Path],
-        instance_name: str
-    ) -> None:
+    def write_solution(self, path: Union[str, Path], instance_name: str) -> None:
         path = Path(path)
 
         with path.open("w") as f:
@@ -44,17 +43,37 @@ class Solution:
                 else:
                     f.write(" ".join(str(node) for node in route) + "\n")
 
+
+
+def calc_route_cargo(I: Instance, route: Route) -> NDArray:
+    """
+    Return an array cargo[t] = cargo *after leaving* route[t].
+
+    The depot is implicit and has cargo = 0 at start.
+    """
+    cargo = 0
+    out = np.zeros(len(route), dtype=int)
+
+    for t, node in enumerate(route):
+        cargo += I.load_change[node]  # pickup = +d_i, delivery = -d_i
+        out[t] = cargo
+
+    return out
+
+
 def route_distance(inst: Instance, route: Route) -> int:
     if not route:
         return 0
-    d = inst.dist[0, route[0]]            # depot -> first
+    d = inst.dist[0, route[0]]  # depot -> first
     for u, v in zip(route, route[1:]):
         d += inst.dist[u, v]
-    d += inst.dist[route[-1], 0]          # last -> depot
+    d += inst.dist[route[-1], 0]  # last -> depot
     return d
+
 
 def all_route_distances(inst: Instance, sol: Solution) -> np.ndarray:
     return np.array([route_distance(inst, r) for r in sol.routes], dtype=float)
+
 
 def jain_fairness(dists: NDArray) -> float:
     if len(dists) == 0:
@@ -64,6 +83,7 @@ def jain_fairness(dists: NDArray) -> float:
     if den == 0:
         raise RuntimeError("Division with zero during calc of jaion fairness")
     return num / den
+
 
 def objective(inst: Instance, sol: Solution) -> float:
     dists = all_route_distances(inst, sol)
@@ -109,11 +129,11 @@ def parse_instance(path: Path) -> Instance:
 
     # Header line
     h = lines[0].split()
-    n    = int(h[0])
-    nK   = int(h[1])
-    C    = int(h[2])
+    n = int(h[0])
+    nK = int(h[1])
+    C = int(h[2])
     gamma = int(h[3])
-    rho  = float(h[4])
+    rho = float(h[4])
 
     # Find marker positions
     idx_dem = None
@@ -128,7 +148,7 @@ def parse_instance(path: Path) -> Instance:
         raise ValueError("Instance file missing required markers.")
 
     # Parse demands between the two markers
-    demand_section = lines[idx_dem + 1: idx_loc]
+    demand_section = lines[idx_dem + 1 : idx_loc]
     demand_tokens = " ".join(demand_section).split()
 
     if len(demand_tokens) != n:
@@ -138,7 +158,7 @@ def parse_instance(path: Path) -> Instance:
 
     # Parse coordinates (depot + pickups + drop-offs)
     expected = 1 + 2 * n
-    loc_lines = lines[idx_loc + 1: idx_loc + 1 + expected]
+    loc_lines = lines[idx_loc + 1 : idx_loc + 1 + expected]
 
     if len(loc_lines) != expected:
         raise ValueError("Incorrect number of location lines.")
@@ -154,9 +174,7 @@ def parse_instance(path: Path) -> Instance:
     for u in range(nV):
         for v in range(nV):
             if u != v:
-                dist[u, v] = math.ceil(
-                    math.dist(coords[u], coords[v])
-                )
+                dist[u, v] = math.ceil(math.dist(coords[u], coords[v]))
 
     # Helper arrays: request mapping + load change
     request_of_node = np.full(nV, -1, dtype=int)
@@ -164,18 +182,22 @@ def parse_instance(path: Path) -> Instance:
 
     for i in range(n):  # request index 0..n-1
         pickup = 1 + i
-        drop   = 1 + n + i
+        drop = 1 + n + i
 
         request_of_node[pickup] = i
         request_of_node[drop] = i
 
         c = demands[i]
         load_change[pickup] = +c
-        load_change[drop]   = -c
+        load_change[drop] = -c
 
     return Instance(
         name=name,
-        n=n, nK=nK, C=C, gamma=gamma, rho=rho,
+        n=n,
+        nK=nK,
+        C=C,
+        gamma=gamma,
+        rho=rho,
         demands=demands,
         coords=coords,
         dist=dist,
@@ -208,8 +230,6 @@ def parse_solution(path: str, inst: Instance) -> Solution:
         routes += [[] for _ in range(inst.nK - len(routes))]
     elif len(routes) > inst.nK:
         # trim extra routes
-        routes = routes[:inst.nK]
+        routes = routes[: inst.nK]
 
     return Solution(routes=routes)
-
-
