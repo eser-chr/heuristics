@@ -2,7 +2,7 @@ from __future__ import annotations
 from neighborhoods import *
 from typing import Callable, Optional, Any
 from abc import abstractmethod
-
+import random
 
 # ------------------------------------------------------------
 # Base Functor Interface
@@ -61,7 +61,7 @@ class ImprovementThreshold(StoppingCriterion):
 
 
 # ------------------------------------------------------------
-# Combinators (Functor Composition)
+# Combination of More than One Stopping Criteria
 # ------------------------------------------------------------
 
 
@@ -103,15 +103,38 @@ class StepFunction:
 
     @staticmethod
     def first_improvement(neighborhood: Neighborhood) -> Return_t:
+        for mov in neighborhood.generate():
+            if neighborhood.is_valid(mov):
+                delta = neighborhood.calc_delta(mov)
+                if delta < 0:
+                    return mov
         return None
 
     @staticmethod
     def best_improvement(neighborhood: Neighborhood) -> Return_t:
-        return None
+        best_mov = None
+        best_delta = 0
+
+        for mov in neighborhood.generate():
+            if neighborhood.is_valid(mov):
+                delta = neighborhood.calc_delta(mov)
+                if delta < best_delta:
+                    best_delta = delta
+                    best_mov = mov
+
+        return best_mov
 
     @staticmethod
     def random_step(neighborhood: Neighborhood) -> Return_t:
-        return None
+        valid_moves = []
+        for mov in neighborhood.generate():
+            if neighborhood.is_valid(mov):
+                valid_moves.append(mov)
+
+        if not valid_moves:
+            return None
+
+        return random.choice(valid_moves)
 
 
 def local_search(
