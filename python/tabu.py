@@ -14,7 +14,6 @@ def tabu_search(
     I: Instance,
     sol: Solution,
     neighborhoods_cls: List[type[Neighborhood]],
-    step_function: StepFunction.Func_t,
     tabu_tenure: int = 20,
     max_iters: int = 500,
     aspiration_factor: float = 0.99,

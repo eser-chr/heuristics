@@ -44,7 +44,6 @@ class Solution:
                     f.write(" ".join(str(node) for node in route) + "\n")
 
 
-
 def calc_route_cargo(I: Instance, route: Route) -> NDArray:
     """
     Return an array cargo[t] = cargo *after leaving* route[t].
@@ -81,7 +80,9 @@ def jain_fairness(dists: NDArray) -> float:
     num = dists.sum() ** 2
     den = len(dists) * np.square(dists).sum()
     if den == 0:
-        raise RuntimeError("Division with zero during calc of jaion fairness")
+        raise RuntimeError(
+            f"Division with zero during calc of jaion fairness.  len (dists) = {len(dists)}, np.square(dists).sum {np.square(dists).sum()}"
+        )
     return num / den
 
 
