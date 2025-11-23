@@ -117,24 +117,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named tests
+# Target rules for targets named main
 
 # Build rule for target.
-tests: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests
-.PHONY : tests
+main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 main
+.PHONY : main
 
 # fast build rule for target.
-tests/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/build
-.PHONY : tests/fast
+main/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+.PHONY : main/fast
 
 src/beam_search.o: src/beam_search.cpp.o
 .PHONY : src/beam_search.o
 
 # target to build an object file
 src/beam_search.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/beam_search.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/beam_search.cpp.o
 .PHONY : src/beam_search.cpp.o
 
 src/beam_search.i: src/beam_search.cpp.i
@@ -142,7 +142,7 @@ src/beam_search.i: src/beam_search.cpp.i
 
 # target to preprocess a source file
 src/beam_search.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/beam_search.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/beam_search.cpp.i
 .PHONY : src/beam_search.cpp.i
 
 src/beam_search.s: src/beam_search.cpp.s
@@ -150,7 +150,7 @@ src/beam_search.s: src/beam_search.cpp.s
 
 # target to generate assembly for a file
 src/beam_search.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/beam_search.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/beam_search.cpp.s
 .PHONY : src/beam_search.cpp.s
 
 src/construction.o: src/construction.cpp.o
@@ -158,7 +158,7 @@ src/construction.o: src/construction.cpp.o
 
 # target to build an object file
 src/construction.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/construction.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/construction.cpp.o
 .PHONY : src/construction.cpp.o
 
 src/construction.i: src/construction.cpp.i
@@ -166,7 +166,7 @@ src/construction.i: src/construction.cpp.i
 
 # target to preprocess a source file
 src/construction.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/construction.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/construction.cpp.i
 .PHONY : src/construction.cpp.i
 
 src/construction.s: src/construction.cpp.s
@@ -174,7 +174,7 @@ src/construction.s: src/construction.cpp.s
 
 # target to generate assembly for a file
 src/construction.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/construction.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/construction.cpp.s
 .PHONY : src/construction.cpp.s
 
 src/grasp.o: src/grasp.cpp.o
@@ -182,7 +182,7 @@ src/grasp.o: src/grasp.cpp.o
 
 # target to build an object file
 src/grasp.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/grasp.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/grasp.cpp.o
 .PHONY : src/grasp.cpp.o
 
 src/grasp.i: src/grasp.cpp.i
@@ -190,7 +190,7 @@ src/grasp.i: src/grasp.cpp.i
 
 # target to preprocess a source file
 src/grasp.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/grasp.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/grasp.cpp.i
 .PHONY : src/grasp.cpp.i
 
 src/grasp.s: src/grasp.cpp.s
@@ -198,7 +198,7 @@ src/grasp.s: src/grasp.cpp.s
 
 # target to generate assembly for a file
 src/grasp.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/grasp.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/grasp.cpp.s
 .PHONY : src/grasp.cpp.s
 
 src/instance.o: src/instance.cpp.o
@@ -206,7 +206,7 @@ src/instance.o: src/instance.cpp.o
 
 # target to build an object file
 src/instance.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/instance.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/instance.cpp.o
 .PHONY : src/instance.cpp.o
 
 src/instance.i: src/instance.cpp.i
@@ -214,7 +214,7 @@ src/instance.i: src/instance.cpp.i
 
 # target to preprocess a source file
 src/instance.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/instance.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/instance.cpp.i
 .PHONY : src/instance.cpp.i
 
 src/instance.s: src/instance.cpp.s
@@ -222,7 +222,7 @@ src/instance.s: src/instance.cpp.s
 
 # target to generate assembly for a file
 src/instance.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/instance.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/instance.cpp.s
 .PHONY : src/instance.cpp.s
 
 src/local_search.o: src/local_search.cpp.o
@@ -230,7 +230,7 @@ src/local_search.o: src/local_search.cpp.o
 
 # target to build an object file
 src/local_search.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/local_search.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/local_search.cpp.o
 .PHONY : src/local_search.cpp.o
 
 src/local_search.i: src/local_search.cpp.i
@@ -238,7 +238,7 @@ src/local_search.i: src/local_search.cpp.i
 
 # target to preprocess a source file
 src/local_search.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/local_search.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/local_search.cpp.i
 .PHONY : src/local_search.cpp.i
 
 src/local_search.s: src/local_search.cpp.s
@@ -246,15 +246,39 @@ src/local_search.s: src/local_search.cpp.s
 
 # target to generate assembly for a file
 src/local_search.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/local_search.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/local_search.cpp.s
 .PHONY : src/local_search.cpp.s
+
+src/main.o: src/main.cpp.o
+.PHONY : src/main.o
+
+# target to build an object file
+src/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
+
+src/main.i: src/main.cpp.i
+.PHONY : src/main.i
+
+# target to preprocess a source file
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
+
+src/main.s: src/main.cpp.s
+.PHONY : src/main.s
+
+# target to generate assembly for a file
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
 src/neighborhoods.o: src/neighborhoods.cpp.o
 .PHONY : src/neighborhoods.o
 
 # target to build an object file
 src/neighborhoods.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/neighborhoods.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/neighborhoods.cpp.o
 .PHONY : src/neighborhoods.cpp.o
 
 src/neighborhoods.i: src/neighborhoods.cpp.i
@@ -262,7 +286,7 @@ src/neighborhoods.i: src/neighborhoods.cpp.i
 
 # target to preprocess a source file
 src/neighborhoods.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/neighborhoods.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/neighborhoods.cpp.i
 .PHONY : src/neighborhoods.cpp.i
 
 src/neighborhoods.s: src/neighborhoods.cpp.s
@@ -270,7 +294,7 @@ src/neighborhoods.s: src/neighborhoods.cpp.s
 
 # target to generate assembly for a file
 src/neighborhoods.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/neighborhoods.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/neighborhoods.cpp.s
 .PHONY : src/neighborhoods.cpp.s
 
 src/sa.o: src/sa.cpp.o
@@ -278,7 +302,7 @@ src/sa.o: src/sa.cpp.o
 
 # target to build an object file
 src/sa.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/sa.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/sa.cpp.o
 .PHONY : src/sa.cpp.o
 
 src/sa.i: src/sa.cpp.i
@@ -286,7 +310,7 @@ src/sa.i: src/sa.cpp.i
 
 # target to preprocess a source file
 src/sa.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/sa.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/sa.cpp.i
 .PHONY : src/sa.cpp.i
 
 src/sa.s: src/sa.cpp.s
@@ -294,7 +318,7 @@ src/sa.s: src/sa.cpp.s
 
 # target to generate assembly for a file
 src/sa.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/sa.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/sa.cpp.s
 .PHONY : src/sa.cpp.s
 
 src/solution.o: src/solution.cpp.o
@@ -302,7 +326,7 @@ src/solution.o: src/solution.cpp.o
 
 # target to build an object file
 src/solution.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/solution.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/solution.cpp.o
 .PHONY : src/solution.cpp.o
 
 src/solution.i: src/solution.cpp.i
@@ -310,7 +334,7 @@ src/solution.i: src/solution.cpp.i
 
 # target to preprocess a source file
 src/solution.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/solution.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/solution.cpp.i
 .PHONY : src/solution.cpp.i
 
 src/solution.s: src/solution.cpp.s
@@ -318,39 +342,15 @@ src/solution.s: src/solution.cpp.s
 
 # target to generate assembly for a file
 src/solution.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/solution.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/solution.cpp.s
 .PHONY : src/solution.cpp.s
-
-src/tests.o: src/tests.cpp.o
-.PHONY : src/tests.o
-
-# target to build an object file
-src/tests.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/tests.cpp.o
-.PHONY : src/tests.cpp.o
-
-src/tests.i: src/tests.cpp.i
-.PHONY : src/tests.i
-
-# target to preprocess a source file
-src/tests.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/tests.cpp.i
-.PHONY : src/tests.cpp.i
-
-src/tests.s: src/tests.cpp.s
-.PHONY : src/tests.s
-
-# target to generate assembly for a file
-src/tests.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/tests.cpp.s
-.PHONY : src/tests.cpp.s
 
 src/utils.o: src/utils.cpp.o
 .PHONY : src/utils.o
 
 # target to build an object file
 src/utils.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/utils.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/utils.cpp.o
 .PHONY : src/utils.cpp.o
 
 src/utils.i: src/utils.cpp.i
@@ -358,7 +358,7 @@ src/utils.i: src/utils.cpp.i
 
 # target to preprocess a source file
 src/utils.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/utils.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/utils.cpp.i
 .PHONY : src/utils.cpp.i
 
 src/utils.s: src/utils.cpp.s
@@ -366,7 +366,7 @@ src/utils.s: src/utils.cpp.s
 
 # target to generate assembly for a file
 src/utils.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/utils.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/utils.cpp.s
 .PHONY : src/utils.cpp.s
 
 src/vnd.o: src/vnd.cpp.o
@@ -374,7 +374,7 @@ src/vnd.o: src/vnd.cpp.o
 
 # target to build an object file
 src/vnd.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/vnd.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/vnd.cpp.o
 .PHONY : src/vnd.cpp.o
 
 src/vnd.i: src/vnd.cpp.i
@@ -382,7 +382,7 @@ src/vnd.i: src/vnd.cpp.i
 
 # target to preprocess a source file
 src/vnd.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/vnd.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/vnd.cpp.i
 .PHONY : src/vnd.cpp.i
 
 src/vnd.s: src/vnd.cpp.s
@@ -390,7 +390,7 @@ src/vnd.s: src/vnd.cpp.s
 
 # target to generate assembly for a file
 src/vnd.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/src/vnd.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/vnd.cpp.s
 .PHONY : src/vnd.cpp.s
 
 # Help Target
@@ -401,7 +401,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... tests"
+	@echo "... main"
 	@echo "... src/beam_search.o"
 	@echo "... src/beam_search.i"
 	@echo "... src/beam_search.s"
@@ -417,6 +417,9 @@ help:
 	@echo "... src/local_search.o"
 	@echo "... src/local_search.i"
 	@echo "... src/local_search.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
 	@echo "... src/neighborhoods.o"
 	@echo "... src/neighborhoods.i"
 	@echo "... src/neighborhoods.s"
@@ -426,9 +429,6 @@ help:
 	@echo "... src/solution.o"
 	@echo "... src/solution.i"
 	@echo "... src/solution.s"
-	@echo "... src/tests.o"
-	@echo "... src/tests.i"
-	@echo "... src/tests.s"
 	@echo "... src/utils.o"
 	@echo "... src/utils.i"
 	@echo "... src/utils.s"

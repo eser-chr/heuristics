@@ -7,5 +7,5 @@ include_directories(include)
 
 file(GLOB SOURCES src/*.cpp)
 
-add_executable(tests ${SOURCES})
+add_executable(main ${SOURCES})
 
