@@ -2,17 +2,8 @@ main: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o \
-  CMakeFiles/main.dir/src/beam_search.cpp.o \
-  CMakeFiles/main.dir/src/construction.cpp.o \
-  CMakeFiles/main.dir/src/grasp.cpp.o \
-  CMakeFiles/main.dir/src/instance.cpp.o \
-  CMakeFiles/main.dir/src/local_search.cpp.o \
   CMakeFiles/main.dir/src/main.cpp.o \
-  CMakeFiles/main.dir/src/neighborhoods.cpp.o \
-  CMakeFiles/main.dir/src/sa.cpp.o \
-  CMakeFiles/main.dir/src/solution.cpp.o \
-  CMakeFiles/main.dir/src/utils.cpp.o \
-  CMakeFiles/main.dir/src/vnd.cpp.o \
+  libcore.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libstdc++.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libm.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libm.so \
@@ -47,27 +38,9 @@ main: \
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o:
 
-CMakeFiles/main.dir/src/beam_search.cpp.o:
-
-CMakeFiles/main.dir/src/construction.cpp.o:
-
-CMakeFiles/main.dir/src/grasp.cpp.o:
-
-CMakeFiles/main.dir/src/instance.cpp.o:
-
-CMakeFiles/main.dir/src/local_search.cpp.o:
-
 CMakeFiles/main.dir/src/main.cpp.o:
 
-CMakeFiles/main.dir/src/neighborhoods.cpp.o:
-
-CMakeFiles/main.dir/src/sa.cpp.o:
-
-CMakeFiles/main.dir/src/solution.cpp.o:
-
-CMakeFiles/main.dir/src/utils.cpp.o:
-
-CMakeFiles/main.dir/src/vnd.cpp.o:
+libcore.a:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libstdc++.so:
 

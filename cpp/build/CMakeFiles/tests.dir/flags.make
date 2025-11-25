@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/chris/Desktop/heuristics/heuristics/cpp/include
+CXX_INCLUDES = -I/home/chris/Desktop/heuristics/heuristics/cpp/include -I/home/chris/Desktop/heuristics/heuristics/cpp/src
 
 CXX_FLAGS = -std=gnu++20
 

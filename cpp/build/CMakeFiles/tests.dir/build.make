@@ -72,122 +72,10 @@ include CMakeFiles/tests.dir/flags.make
 CMakeFiles/tests.dir/codegen:
 .PHONY : CMakeFiles/tests.dir/codegen
 
-CMakeFiles/tests.dir/src/beam_search.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/beam_search.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/beam_search.cpp
-CMakeFiles/tests.dir/src/beam_search.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tests.dir/src/beam_search.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/beam_search.cpp.o -MF CMakeFiles/tests.dir/src/beam_search.cpp.o.d -o CMakeFiles/tests.dir/src/beam_search.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/beam_search.cpp
-
-CMakeFiles/tests.dir/src/beam_search.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/beam_search.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/beam_search.cpp > CMakeFiles/tests.dir/src/beam_search.cpp.i
-
-CMakeFiles/tests.dir/src/beam_search.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/beam_search.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/beam_search.cpp -o CMakeFiles/tests.dir/src/beam_search.cpp.s
-
-CMakeFiles/tests.dir/src/construction.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/construction.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/construction.cpp
-CMakeFiles/tests.dir/src/construction.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/tests.dir/src/construction.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/construction.cpp.o -MF CMakeFiles/tests.dir/src/construction.cpp.o.d -o CMakeFiles/tests.dir/src/construction.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/construction.cpp
-
-CMakeFiles/tests.dir/src/construction.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/construction.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/construction.cpp > CMakeFiles/tests.dir/src/construction.cpp.i
-
-CMakeFiles/tests.dir/src/construction.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/construction.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/construction.cpp -o CMakeFiles/tests.dir/src/construction.cpp.s
-
-CMakeFiles/tests.dir/src/grasp.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/grasp.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/grasp.cpp
-CMakeFiles/tests.dir/src/grasp.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/tests.dir/src/grasp.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/grasp.cpp.o -MF CMakeFiles/tests.dir/src/grasp.cpp.o.d -o CMakeFiles/tests.dir/src/grasp.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/grasp.cpp
-
-CMakeFiles/tests.dir/src/grasp.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/grasp.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/grasp.cpp > CMakeFiles/tests.dir/src/grasp.cpp.i
-
-CMakeFiles/tests.dir/src/grasp.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/grasp.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/grasp.cpp -o CMakeFiles/tests.dir/src/grasp.cpp.s
-
-CMakeFiles/tests.dir/src/instance.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/instance.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/instance.cpp
-CMakeFiles/tests.dir/src/instance.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/tests.dir/src/instance.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/instance.cpp.o -MF CMakeFiles/tests.dir/src/instance.cpp.o.d -o CMakeFiles/tests.dir/src/instance.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/instance.cpp
-
-CMakeFiles/tests.dir/src/instance.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/instance.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/instance.cpp > CMakeFiles/tests.dir/src/instance.cpp.i
-
-CMakeFiles/tests.dir/src/instance.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/instance.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/instance.cpp -o CMakeFiles/tests.dir/src/instance.cpp.s
-
-CMakeFiles/tests.dir/src/local_search.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/local_search.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/local_search.cpp
-CMakeFiles/tests.dir/src/local_search.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/tests.dir/src/local_search.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/local_search.cpp.o -MF CMakeFiles/tests.dir/src/local_search.cpp.o.d -o CMakeFiles/tests.dir/src/local_search.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/local_search.cpp
-
-CMakeFiles/tests.dir/src/local_search.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/local_search.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/local_search.cpp > CMakeFiles/tests.dir/src/local_search.cpp.i
-
-CMakeFiles/tests.dir/src/local_search.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/local_search.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/local_search.cpp -o CMakeFiles/tests.dir/src/local_search.cpp.s
-
-CMakeFiles/tests.dir/src/neighborhoods.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/neighborhoods.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/neighborhoods.cpp
-CMakeFiles/tests.dir/src/neighborhoods.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/tests.dir/src/neighborhoods.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/neighborhoods.cpp.o -MF CMakeFiles/tests.dir/src/neighborhoods.cpp.o.d -o CMakeFiles/tests.dir/src/neighborhoods.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/neighborhoods.cpp
-
-CMakeFiles/tests.dir/src/neighborhoods.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/neighborhoods.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/neighborhoods.cpp > CMakeFiles/tests.dir/src/neighborhoods.cpp.i
-
-CMakeFiles/tests.dir/src/neighborhoods.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/neighborhoods.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/neighborhoods.cpp -o CMakeFiles/tests.dir/src/neighborhoods.cpp.s
-
-CMakeFiles/tests.dir/src/sa.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/sa.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/sa.cpp
-CMakeFiles/tests.dir/src/sa.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/tests.dir/src/sa.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/sa.cpp.o -MF CMakeFiles/tests.dir/src/sa.cpp.o.d -o CMakeFiles/tests.dir/src/sa.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/sa.cpp
-
-CMakeFiles/tests.dir/src/sa.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/sa.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/sa.cpp > CMakeFiles/tests.dir/src/sa.cpp.i
-
-CMakeFiles/tests.dir/src/sa.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/sa.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/sa.cpp -o CMakeFiles/tests.dir/src/sa.cpp.s
-
-CMakeFiles/tests.dir/src/solution.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/solution.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/solution.cpp
-CMakeFiles/tests.dir/src/solution.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/tests.dir/src/solution.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/solution.cpp.o -MF CMakeFiles/tests.dir/src/solution.cpp.o.d -o CMakeFiles/tests.dir/src/solution.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/solution.cpp
-
-CMakeFiles/tests.dir/src/solution.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/solution.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/solution.cpp > CMakeFiles/tests.dir/src/solution.cpp.i
-
-CMakeFiles/tests.dir/src/solution.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/solution.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/solution.cpp -o CMakeFiles/tests.dir/src/solution.cpp.s
-
 CMakeFiles/tests.dir/src/tests.cpp.o: CMakeFiles/tests.dir/flags.make
 CMakeFiles/tests.dir/src/tests.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/tests.cpp
 CMakeFiles/tests.dir/src/tests.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/tests.dir/src/tests.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tests.dir/src/tests.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/tests.cpp.o -MF CMakeFiles/tests.dir/src/tests.cpp.o.d -o CMakeFiles/tests.dir/src/tests.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/tests.cpp
 
 CMakeFiles/tests.dir/src/tests.cpp.i: cmake_force
@@ -198,66 +86,19 @@ CMakeFiles/tests.dir/src/tests.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/tests.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/tests.cpp -o CMakeFiles/tests.dir/src/tests.cpp.s
 
-CMakeFiles/tests.dir/src/utils.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/utils.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/utils.cpp
-CMakeFiles/tests.dir/src/utils.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/tests.dir/src/utils.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/utils.cpp.o -MF CMakeFiles/tests.dir/src/utils.cpp.o.d -o CMakeFiles/tests.dir/src/utils.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/utils.cpp
-
-CMakeFiles/tests.dir/src/utils.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/utils.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/utils.cpp > CMakeFiles/tests.dir/src/utils.cpp.i
-
-CMakeFiles/tests.dir/src/utils.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/utils.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/utils.cpp -o CMakeFiles/tests.dir/src/utils.cpp.s
-
-CMakeFiles/tests.dir/src/vnd.cpp.o: CMakeFiles/tests.dir/flags.make
-CMakeFiles/tests.dir/src/vnd.cpp.o: /home/chris/Desktop/heuristics/heuristics/cpp/src/vnd.cpp
-CMakeFiles/tests.dir/src/vnd.cpp.o: CMakeFiles/tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/tests.dir/src/vnd.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tests.dir/src/vnd.cpp.o -MF CMakeFiles/tests.dir/src/vnd.cpp.o.d -o CMakeFiles/tests.dir/src/vnd.cpp.o -c /home/chris/Desktop/heuristics/heuristics/cpp/src/vnd.cpp
-
-CMakeFiles/tests.dir/src/vnd.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tests.dir/src/vnd.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chris/Desktop/heuristics/heuristics/cpp/src/vnd.cpp > CMakeFiles/tests.dir/src/vnd.cpp.i
-
-CMakeFiles/tests.dir/src/vnd.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tests.dir/src/vnd.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chris/Desktop/heuristics/heuristics/cpp/src/vnd.cpp -o CMakeFiles/tests.dir/src/vnd.cpp.s
-
 # Object files for target tests
 tests_OBJECTS = \
-"CMakeFiles/tests.dir/src/beam_search.cpp.o" \
-"CMakeFiles/tests.dir/src/construction.cpp.o" \
-"CMakeFiles/tests.dir/src/grasp.cpp.o" \
-"CMakeFiles/tests.dir/src/instance.cpp.o" \
-"CMakeFiles/tests.dir/src/local_search.cpp.o" \
-"CMakeFiles/tests.dir/src/neighborhoods.cpp.o" \
-"CMakeFiles/tests.dir/src/sa.cpp.o" \
-"CMakeFiles/tests.dir/src/solution.cpp.o" \
-"CMakeFiles/tests.dir/src/tests.cpp.o" \
-"CMakeFiles/tests.dir/src/utils.cpp.o" \
-"CMakeFiles/tests.dir/src/vnd.cpp.o"
+"CMakeFiles/tests.dir/src/tests.cpp.o"
 
 # External object files for target tests
 tests_EXTERNAL_OBJECTS =
 
-tests: CMakeFiles/tests.dir/src/beam_search.cpp.o
-tests: CMakeFiles/tests.dir/src/construction.cpp.o
-tests: CMakeFiles/tests.dir/src/grasp.cpp.o
-tests: CMakeFiles/tests.dir/src/instance.cpp.o
-tests: CMakeFiles/tests.dir/src/local_search.cpp.o
-tests: CMakeFiles/tests.dir/src/neighborhoods.cpp.o
-tests: CMakeFiles/tests.dir/src/sa.cpp.o
-tests: CMakeFiles/tests.dir/src/solution.cpp.o
 tests: CMakeFiles/tests.dir/src/tests.cpp.o
-tests: CMakeFiles/tests.dir/src/utils.cpp.o
-tests: CMakeFiles/tests.dir/src/vnd.cpp.o
 tests: CMakeFiles/tests.dir/build.make
 tests: CMakeFiles/tests.dir/compiler_depend.ts
+tests: libcore.a
 tests: CMakeFiles/tests.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/chris/Desktop/heuristics/heuristics/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable tests"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/tests.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
