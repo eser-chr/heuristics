@@ -85,7 +85,7 @@ int main()
         if (RUN_VND)
         {
             MaxIterations stopping(10000);
-            sol_vnd = VND::vnd(I, sol_beam, neighborhoods, StepFunction::best_improvement, stopping);
+            sol_vnd = VND::vnd(I, sol_beam, neighborhoods, StepFunction::first_improvement, stopping);
             f_vnd = utils::objective(I, sol_vnd);
             t5 = std::chrono::high_resolution_clock::now();
         }
