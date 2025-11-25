@@ -134,7 +134,7 @@ Solution GRASP::randomized_constructor_simple(
 Solution GRASP::grasp(
     const Instance &I,
     std::function<Solution(const Instance &)> randomized_constructor,
-    const Neighborhood::NeighborhoodFactory &neighborhoods,
+    const Neighborhood::NeighborhoodFactories &neighborhoods,
     StepFunction::Func step_function,
     StoppingCriterion &stopping_outer,
     StoppingCriterion &stopping_local)
@@ -147,7 +147,7 @@ Solution GRASP::grasp(
     // reset local-search stop criterion every restart
     stopping_local.reset();
     stopping_outer.reset();
-
+    
     while (!stopping_outer(step, best_f))
     {
         // === construct a new initial solution ===
@@ -157,7 +157,7 @@ Solution GRASP::grasp(
         Solution sol1 = LS::local_search(
             I,
             sol0,
-            neighborhoods,
+            neighborhoods[step%neighborhoods.size()], //rotate neighborhood
             step_function,
             stopping_local);
 

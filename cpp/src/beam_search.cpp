@@ -3,18 +3,14 @@
 #include <limits>
 #include "solvers.hpp"
 #include "utils.hpp"
-
+void flush_deliveries(
+    const Instance &I,
+    std::vector<int> &route,       // will be extended
+    const std::vector<int> &active // remaining pickups (to deliver)
+);
 Solution BS::beam_search(const Instance &I, double a, int beam_width)
 {
     std::vector<double> costs = utils::calc_my_metric(I, a);
-
-    // // argsort(costs)
-    // std::vector<int> perm(I.n);
-    // std::iota(perm.begin(), perm.end(), 0);
-    // std::sort(perm.begin(), perm.end(),
-    //           [&](int i, int j)
-    //           { return costs[i] < costs[j]; });
-
     auto perm = numerical::argsort(costs);
     int gamma = std::min(I.gamma, I.n);
     std::vector<int> important(perm.begin(), perm.begin() + gamma);
@@ -59,13 +55,11 @@ Solution BS::beam_search(const Instance &I, double a, int beam_width)
                 // 1) pick remaining requests
                 for (int req : rem)
                 {
-                    int dem = I.demands[req];
-                    if (cargo + dem <= I.C)
+                    if (cargo + I.demands[req] <= I.C)
                     {
                         int p = 1 + req;
                         std::vector<int> new_route = route;
                         new_route.push_back(p);
-                        int new_cargo = cargo + dem;
 
                         std::vector<int> new_active = active;
                         new_active.push_back(req);
@@ -84,7 +78,7 @@ Solution BS::beam_search(const Instance &I, double a, int beam_width)
                         new_beam.push_back(BS::BeamState{
                             new_score,
                             std::move(new_route),
-                            new_cargo,
+                            cargo + I.demands[req],
                             std::move(new_active),
                             std::move(new_remaining)});
                     }
@@ -142,20 +136,7 @@ Solution BS::beam_search(const Instance &I, double a, int beam_width)
         for (const auto &st : partial_routes)
         {
             std::vector<int> final_route = st.route;
-            int last = final_route.empty() ? 0 : final_route.back();
-
-            auto active = st.active;
-            std::sort(active.begin(), active.end(),
-                      [&](int r1, int r2)
-                      {
-                          int d1 = I.dist[last][1 + I.n + r1];
-                          int d2 = I.dist[last][1 + I.n + r2];
-                          return d1 < d2;
-                      });
-
-            for (int req : active)
-                final_route.push_back(1 + I.n + req);
-
+            flush_deliveries(I, final_route, st.active);
             int d = utils::route_distance(I, final_route);
             if (d < best_score)
             {
@@ -170,4 +151,44 @@ Solution BS::beam_search(const Instance &I, double a, int beam_width)
     Solution sol;
     sol.routes = std::move(routes);
     return sol;
+}
+void flush_deliveries(
+    const Instance &I,
+    std::vector<int> &route,       // will be extended
+    const std::vector<int> &active // remaining pickups (to deliver)
+)
+{
+    // Copy active list because we need to erase from it locally
+    std::vector<int> remaining = active;
+
+    int last = route.empty() ? 0 : route.back();
+
+    while (!remaining.empty())
+    {
+        int best_r = -1;
+        double best_d = 1e18;
+
+        for (int r : remaining)
+        {
+            int deliver_node = 1 + I.n + r;
+            double d = I.dist[last][deliver_node];
+            if (d < best_d)
+            {
+                best_d = d;
+                best_r = r;
+            }
+        }
+
+        // Append best delivery
+        int deliver_node = 1 + I.n + best_r;
+        route.push_back(deliver_node);
+
+        // Update last
+        last = deliver_node;
+
+        // Remove delivered request
+        remaining.erase(
+            std::remove(remaining.begin(), remaining.end(), best_r),
+            remaining.end());
+    }
 }

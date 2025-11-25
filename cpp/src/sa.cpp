@@ -5,7 +5,7 @@
 Solution SA::simulated_annealing(
     const Instance &I,
     const Solution &initial_sol,
-    const Neighborhood::NeighborhoodFactory &neighborhood_factories,
+    const Neighborhood::NeighborhoodFactories &neighborhood_factories,
     double T_start,
     double T_end,
     double cooling,

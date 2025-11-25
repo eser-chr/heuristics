@@ -45,7 +45,10 @@ namespace VND
     Solution vnd(
         const Instance &I,
         const Solution &initial_sol,
-        const Neighborhood::NeighborhoodFactory &neighborhood_factories);
+        const Neighborhood::NeighborhoodFactories &neighborhood_factories,
+        StepFunction::Func step_function,
+        StoppingCriterion& stopping_criterion
+    );
 
 };
 namespace GRASP
@@ -60,7 +63,7 @@ namespace GRASP
     Solution grasp(
         const Instance &I,
         std::function<Solution(const Instance &)> randomized_constructor,
-        const Neighborhood::NeighborhoodFactory &neighborhoods,
+        const Neighborhood::NeighborhoodFactories &neighborhoods,
         StepFunction::Func step_function,
         StoppingCriterion &stopping_outer,
         StoppingCriterion &stopping_local);
@@ -71,7 +74,7 @@ namespace SA
     Solution simulated_annealing(
         const Instance &I,
         const Solution &initial_sol,
-        const Neighborhood::NeighborhoodFactory &neighborhood_factories,
+        const Neighborhood::NeighborhoodFactories &neighborhood_factories,
         double T_start = 1.0,
         double T_end = 1e-3,
         double cooling = 0.995,

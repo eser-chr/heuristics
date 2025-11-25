@@ -1,45 +1,37 @@
+#include <iostream>
 #include "solvers.hpp"
 #include "utils.hpp"
+
 
 Solution LS::local_search(
     const Instance &I,
     const Solution &initial_sol,
-    const Neighborhood::NeighborhoodFactory &neigh_factories, // list of lambdas kinda
+    const Neighborhood::NeighborhoodFactory &neigh_factory, 
     StepFunction::Func step_function,
     StoppingCriterion &criterion)
 {
     Solution sol = initial_sol; // copy
     double f = utils::objective(I, sol);
-    int iteration = 0;
+    size_t iteration = 0;
 
     criterion.reset();
 
     while (!criterion(iteration, f))
     {
-        bool improved = false;
+        // build neighborhood for current sol. 
+        // Use of ptr bcs Neighborhood is abstract and need to rebuild many times
+        // and thus not use of reference.
 
-        std::vector<std::unique_ptr<Neighborhood>> neighs;
-        neighs.reserve(neigh_factories.size());
-        for (auto &factory : neigh_factories)
-            neighs.push_back(factory(I, sol));
+        auto neigh = neigh_factory(I, sol);   
+        auto mov = step_function(*neigh);     // best/first move in THIS neighborhood
 
-        for (auto &neigh : neighs)
-        {
-            auto mov = step_function(*neigh);
-            if (mov.has_value())
-            {
-                sol = neigh->apply(*mov);
-                f = utils::objective(I, sol);
-                improved = true;
-                break;
-            }
-        }
+        if (!mov.has_value())
+            break;                            // local optimum w.r.t. this neighborhood
 
-        if (!improved)
-            break;
-
-        iteration++;
+        sol = neigh->apply(*mov);
+        f = utils::objective(I, sol);
+        ++iteration;
+        
     }
-
     return sol;
 }

@@ -43,4 +43,6 @@ namespace numerical
 namespace gt{
     template<typename T>
     using Matrix = std::vector<std::vector<T>>;
+
+    using Coords = std::pair<double, double>;
 };

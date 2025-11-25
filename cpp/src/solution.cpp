@@ -4,6 +4,7 @@
 
 void Solution::write_solution(const std::string &path, const std::string &instance_name) const
 {
+    std::cout<< "nK = "<<routes.size()<<std::endl;
     std::ofstream f(path);
     if (!f)
     {
@@ -17,6 +18,7 @@ void Solution::write_solution(const std::string &path, const std::string &instan
         if (route.empty())
         {
             f << "\n"; // blank line for empty route
+            std::cout<<"One empty route"<<std::endl;
         }
         else
         {

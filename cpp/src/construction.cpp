@@ -1,58 +1,238 @@
+/*
+The idea of this construction heristic is to clusterize the requests into regions and then add them into routes.
+Another possible idea is to use a convex hull for clusters. Maybe in Python.
+*/
+
 #include <vector>
 #include <algorithm>
-
-#include "utils.hpp"
+#include <random>
+#include <limits>
+#include "instance.hpp"
+#include "solution.hpp"
 #include "solvers.hpp"
+#include "utils.hpp"
 
-void add_random_noise(const Instance &I, std::vector<double> noisy, const std::vector<double> &costs, double sigma_factor)
+class ClusterCenters
 {
-    static thread_local std::mt19937 rng(std::random_device{}());
-    double mean = std::accumulate(costs.begin(), costs.end(), 0.0) / costs.size();
-    double var = 0.0;
-    for (double x : costs)
-    {
-        double d = x - mean;
-        var += d * d;
-    }
-    var /= costs.size();
-    double stddev = std::sqrt(var);
+public:
+    using centers_t = std::vector<gt::Coords>;
+    centers_t centers;
 
-    double base = (stddev > 0.0 ? stddev : 1.0);
-    double sigma = sigma_factor * std::max(base, 1e-6);
-
-    std::normal_distribution<double> dist(0.0, sigma);
-    for (int i = 0; i < I.n; ++i)
+    ClusterCenters(const Instance &I) : centers(I.nK, {0.0, 0.0})
     {
-        noisy[i] += dist(rng);
-    }
-}
+        std::vector<int> indices(I.n);
+        std::iota(indices.begin(), indices.end(), 0);
 
-gt::Matrix<int> get_ptrack_requests(int nK, const std::vector<int> requests)
-{
-    std::vector<std::vector<int>> per_track_requests(nK);
-    for (int t = 0; t < nK; ++t)
-    {
-        for (int idx = t; idx < (int)requests.size(); idx += nK)
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::shuffle(indices.begin(), indices.end(), gen);
+
+        for (int k = 0; k < I.nK; k++)
         {
-            per_track_requests[t].push_back(requests[idx]);
+            centers[k] = I.coords[indices[k]];
         }
     }
-    return per_track_requests;
+
+    // Update via an assignment. Calcs the point average of that clusters requests(pickup only!)
+    void update_centers(const Instance &I, const std::vector<int> &assign)
+    {
+
+        centers.assign(I.nK, {0.0, 0.0});
+
+        std::vector<int> count(I.nK, 0);
+
+        for (int r = 0; r < I.n; r++)
+        {
+            int k = assign[r];
+            centers[k].first += I.coords[r].first;
+            centers[k].second += I.coords[r].second;
+            count[k]++;
+        }
+        for (int k = 0; k < I.nK; k++)
+        {
+            if (count[k] > 0)
+            {
+                centers[k].first /= count[k];
+                centers[k].second /= count[k];
+            }
+        }
+    }
+};
+
+double calc_dist2(const gt::Coords &p1, const gt::Coords &p2)
+{
+    double dx = p1.first - p2.first;
+    double dy = p1.second - p2.second;
+    return dx * dx + dy * dy;
 }
 
-// bool are_all_requests_served(const Instance & I, const gt::Matrix<int>& routes)
-// {
-//     std::unordered_set<int> served;
-//     for (const auto &r : routes)
-//     {
-//         for (int node : r)
-//         {
-//             int req = I.request_of_node[node];
-//             if (req >= 0)
-//                 served.insert(req);
-//         }
-//     }
-// }
+std::vector<int> balanced_assign(
+    const Instance &I,
+    const ClusterCenters &C,
+    double target_load)
+{
+
+    std::vector<int> assign(I.n, -1);    // Assing request to cluster center
+    std::vector<double> load(I.nK, 0.0); // Calc the load of each cluster
+
+    for (int r = 0; r < I.n; r++)
+    {
+        double best_score{std::numeric_limits<double>::infinity()};
+        int best_k = 0;
+
+        for (int k = 0; k < I.nK; k++)
+        {
+
+            double dist2 = calc_dist2(I.coords[r], C.centers[k]);
+            double load_after = load[k] + I.demands[r];
+            double load_dev = std::abs(load_after - target_load);
+            double score = dist2 + load_dev * load_dev;
+
+            if (score < best_score)
+            {
+                best_score = score;
+                best_k = k;
+            }
+        }
+
+        assign[r] = best_k;
+        load[best_k] += I.demands[r];
+    }
+
+    return assign;
+}
+
+std::vector<int> balanced_kmeans(
+    const Instance &I,
+    int iters = 20,
+    int restarts = 20)
+{
+    double total_dem = 0;
+    for (int d : I.demands)
+        total_dem += d;
+    double target_load = total_dem / I.nK;
+
+    std::vector<int> best_assign(I.n);
+    double best_score{std::numeric_limits<double>::infinity()};
+
+    for (int s = 0; s < restarts; s++)
+    {
+        ClusterCenters C(I);
+        std::vector<int> assign(I.n, 0);
+        double sc = 0.0;
+
+        // Convergence iteration, to the actual minimization of the problem i.e find balanced Kmeans
+        for (int it = 0; it < iters; it++)
+        {
+            assign = balanced_assign(I, C, target_load);
+            C.update_centers(I, assign);
+        }
+
+        for (int r = 0; r < I.n; r++)
+        {
+            int k = assign[r];
+            sc = calc_dist2(I.coords[r], C.centers[k]);
+        }
+
+        if (sc < best_score)
+        {
+            best_score = sc;
+            best_assign = assign;
+        }
+    }
+
+    return best_assign;
+}
+
+std::vector<int> build_route_greedy(
+    const Instance &I,
+    const std::vector<int> &reqs)
+{
+    std::vector<int> unpicked = reqs;
+    std::vector<int> active;
+    std::vector<int> route;
+    int cargo = 0;
+    int last = 0; // depot
+
+    auto cap_ok = [&](int r)
+    { return cargo + I.demands[r] <= I.C; };
+
+    while (!unpicked.empty() || !active.empty())
+    {
+        int best_node = -1, best_req = -1;
+        bool pick = false;
+        double best_d = 1e18;
+
+        // pickups
+        for (int r : unpicked)
+        {
+            if (!cap_ok(r))
+                continue;
+            int pn = 1 + r;
+            double d = I.dist[last][pn];
+            if (d < best_d)
+            {
+                best_d = d;
+                best_node = pn;
+                best_req = r;
+                pick = true;
+            }
+        }
+
+        // deliveries
+        for (int r : active)
+        {
+            int dn = 1 + I.n + r;
+            double d = I.dist[last][dn];
+            if (d < best_d)
+            {
+                best_d = d;
+                best_node = dn;
+                best_req = r;
+                pick = false;
+            }
+        }
+
+        // Finish by delivering all of them
+        if (best_node == -1)
+        {
+            double bd{std::numeric_limits<double>::infinity()};
+            for (int r : active)
+            {
+                int dn = 1 + I.n + r;
+                double d = I.dist[last][dn];
+                if (d < bd)
+                {
+                    bd = d;
+                    best_node = dn;
+                    best_req = r;
+                    pick = false;
+                }
+            }
+        }
+
+        route.push_back(best_node);
+
+        // cargo logisitcs
+        if (pick)
+        {
+            cargo += I.demands[best_req];
+            active.push_back(best_req);
+            unpicked.erase(std::remove(unpicked.begin(), unpicked.end(), best_req),
+                           unpicked.end());
+        }
+        else
+        {
+            cargo -= I.demands[best_req];
+            active.erase(std::remove(active.begin(), active.end(), best_req),
+                         active.end());
+        }
+
+        last = best_node;
+    }
+
+    return route;
+}
 
 Solution DRC::construction(
     const Instance &I,
@@ -61,144 +241,17 @@ Solution DRC::construction(
     bool is_random)
 {
 
-    std::vector<double> costs = utils::calc_my_metric(I, a);
-    std::vector<double> noisy = costs;
-
-    if (is_random)
-        add_random_noise(I, noisy, costs, sigma_factor);
-
-    auto perm = numerical::argsort(noisy);
-    std::vector<int> important(perm.begin(), perm.begin() + I.gamma); // Select first gamma requests to fullfill.
-    auto per_track_requests = get_ptrack_requests(I.nK, important);
+    std::vector<int> assign = balanced_kmeans(I);
+    gt::Matrix<int> per_track(I.nK); // per track requests-responibilities
+    for (int r = 0; r < I.n; r++)
+        per_track[assign[r]].push_back(r);
 
     gt::Matrix<int> routes;
     routes.reserve(I.nK);
-
-    for (int track = 0; track < I.nK; ++track)
+    for (int k = 0; k < I.nK; k++)
     {
-        std::vector<int> route;
-        std::vector<int> active;
-        int cargo = 0;
-
-        auto less_dem = [&](int r1, int r2)
-        { return I.demands[r1] < I.demands[r2]; };
-        auto greater_dem = [&](int r1, int r2)
-        { return I.demands[r1] > I.demands[r2]; };
-
-        for (int req : per_track_requests[track])
-        {
-            int pickup = 1 + req;
-            int dem = I.demands[req];
-
-            if (cargo + dem > I.C)
-            {
-                // find the lightest request and deliver it i.e push deliver
-                // node to the route.
-                int lightest =
-                    *std::min_element(active.begin(), active.end(), less_dem);
-
-                active.erase(std::remove(active.begin(), active.end(), lightest),
-                             active.end());
-                route.push_back(1 + I.n + lightest);
-                cargo -= I.demands[lightest];
-            }
-
-            route.push_back(pickup);
-            active.push_back(req);
-            cargo += dem;
-        }
-
-        // drop remaining active in descending demand order
-        // std::sort(active.begin(), active.end(), greater_dem);
-
-        int last = route.empty() ? 0 : route.back(); // current end node
-
-        while (!active.empty())
-        {
-            int best_r = -1;
-            double best_d = 1e18;
-
-            for (int r : active)
-            {
-                int deliver_node = 1 + I.n + r;
-                double d = I.dist[last][deliver_node];
-                if (d < best_d)
-                {
-                    best_d = d;
-                    best_r = r;
-                }
-            }
-
-            // append best delivery
-            int deliver_node = 1 + I.n + best_r;
-            route.push_back(deliver_node);
-
-            // update last
-            last = deliver_node;
-
-            // remove it from active
-            active.erase(std::remove(active.begin(), active.end(), best_r),
-                         active.end());
-        }
-
-        for (int r : active)
-            route.push_back(1 + I.n + r);
-
+        auto route = build_route_greedy(I, per_track[k]);
         routes.push_back(std::move(route));
-    }
-
-    // Ensure we serve at least gamma requests
-    std::unordered_set<int> served;
-    for (const auto &r : routes)
-    {
-        for (int node : r)
-        {
-            int req = I.request_of_node[node];
-            if (req >= 0)
-                served.insert(req);
-        }
-    }
-
-    if ((int)served.size() < I.gamma)
-    {
-        std::vector<int> missing;
-        missing.reserve(I.n);
-        for (int req : perm)
-        {
-            if (!served.count(req))
-                missing.push_back(req);
-        }
-
-        for (int req : missing)
-        {
-            if ((int)served.size() >= I.gamma)
-                break;
-            int pickup = 1 + req;
-            int drop = 1 + I.n + req;
-            for (int k = 0; k < I.nK; ++k)
-            {
-                auto new_r = routes[k];
-                new_r.push_back(pickup);
-                new_r.push_back(drop);
-                auto cargo_vec = utils::calc_route_cargo(I, new_r);
-
-                bool ok = true;
-                for (int c : cargo_vec)
-                {
-                    if (c < 0 || c > I.C)
-                    {
-                        ok = false;
-                        break;
-                    }
-                }
-                if (ok)
-                {
-                    routes[k] = std::move(new_r);
-                    served.insert(req);
-                    break;
-                }
-            }
-        }
     }
 
     Solution sol;

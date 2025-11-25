@@ -6,37 +6,38 @@
 #include "utils.hpp"
 
 Solution VND::vnd(
-    const Instance& I,
-    const Solution& initial_sol,
-    const Neighborhood::NeighborhoodFactory &neighborhood_factories
-) {
+    const Instance &I,
+    const Solution &initial_sol,
+    const Neighborhood::NeighborhoodFactories &neighborhood_factories,
+    StepFunction::Func step_function,
+    StoppingCriterion &stopping_criterion)
+{
     Solution sol = initial_sol;
     double f = utils::objective(I, sol);
 
     int i = 0;
     int K = (int)neighborhood_factories.size();
 
-    while (i < K) {
+    while (i < K)
+    {
 
-        Neighborhood::NeighborhoodFactory single_neigh = { neighborhood_factories[i] };
-        MaxIterations stopping(100000);
+        Neighborhood::NeighborhoodFactory single_neigh = neighborhood_factories[i];
         Solution new_sol = LS::local_search(
             I,
             sol,
             single_neigh,
-            StepFunction::first_improvement,
-            stopping
-        );
+            step_function,
+            stopping_criterion);
 
         double f_new = utils::objective(I, new_sol);
-
-        if (f_new < f) {
+        i++;
+        if (f_new < f)
+        {
             sol = new_sol;
             f = f_new;
             i = 0;
-        } else {
-            i += 1;
         }
+        
     }
 
     return sol;
