@@ -6,17 +6,13 @@
 #include "step_function.hpp"
 #include "stopping_criteria.hpp"
 
-namespace DC // Deterministic Random Construction
-// We miss a good random Construction based on the K means principle
+namespace DC // Deterministic Construction
 {
 
     Solution construction(
-        const Instance &I,
-        double a,
-        double sigma_factor = 0.1,
-        bool is_random = false);
+        const Instance &I);
 };
-namespace RC
+namespace RC // Random Construction
 {
     Solution construction(
         const Instance &I,
@@ -63,9 +59,8 @@ namespace GRASP // Replace with the real randomized constructor
 
     Solution randomized_constructor_simple(
         const Instance &I,
-        double a = 0.5,
-        double alpha = 0.3,
-        int max_tries = 20);
+        double a,
+        double alpha);
 
     Solution grasp(
         const Instance &I,
@@ -74,6 +69,15 @@ namespace GRASP // Replace with the real randomized constructor
         StepFunction::Func step_function,
         StoppingCriterion &stopping_outer,
         StoppingCriterion &stopping_local);
+
+    Solution meta_grasp( // Use of VND
+        const Instance &I,
+        std::function<Solution(const Instance &)> randomized_constructor,
+        const Neighborhood::NeighborhoodFactories &neighborhoods,
+        StepFunction::Func step_function,
+        StoppingCriterion &stopping_outer,
+        StoppingCriterion &stopping_local);
+
 };
 
 namespace SA

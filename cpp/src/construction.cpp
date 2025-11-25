@@ -106,10 +106,8 @@ std::vector<int> build_route_greedy(
 }
 
 Solution DC::construction(
-    const Instance &I,
-    double a,
-    double sigma_factor,
-    bool is_random)
+    const Instance &I
+)
 {
 
     std::vector<int> assign = balanced_kmeans(I, 20, 20);

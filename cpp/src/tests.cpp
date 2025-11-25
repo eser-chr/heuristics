@@ -19,11 +19,12 @@ int main()
     std::filesystem::path output = "/home/chris/Desktop/heuristics/heuristics/results/solutions/100";
 
     bool RUN_RANDOM = true;
-    bool RUN_LS = false;
+    bool RUN_LS = true;
     bool RUN_BS = true;
-    bool RUN_VND = false;
+    bool RUN_VND = true;
     bool RUN_SA = true;
     bool RUN_GRASP = false;
+    bool RUN_METAGRASP = false;
 
     try
     {
@@ -31,7 +32,7 @@ int main()
         Instance I(instance_path);
         auto t1 = std::chrono::high_resolution_clock::now();
 
-        Solution sol_drc = DC::construction(I, 1.0);
+        Solution sol_drc = DC::construction(I);
         sol_drc.write_solution(output / "dc.txt", instance_name);
         double f_drc = utils::objective(I, sol_drc);
         auto t2 = std::chrono::high_resolution_clock::now();
@@ -47,9 +48,9 @@ int main()
         MaxIterations stopping(500);
 
         Solution sol_rc, sol_ls, sol_beam, sol_vnd, sol_sa, sol_grasp;
-        double f_ls = 0, f_beam = 0, f_vnd = 0, f_sa = 0, f_grasp = 0, f_rc = 0;
+        double f_ls = 0, f_beam = 0, f_vnd = 0, f_sa = 0, f_grasp = 0, f_rc = 0, f_metagrasp = 0.0;
 
-        auto t3 = t2, t4 = t2, t5 = t2, t6 = t2, t7 = t2, t8 = t2;
+        auto t3 = t2, t4 = t2, t5 = t2, t6 = t2, t7 = t2, t8 = t2, t9=t2;
 
         if (RUN_RANDOM)
         {
@@ -75,7 +76,7 @@ int main()
 
         if (RUN_BS)
         {
-            sol_beam = BS::beam_search(I, 1.0, 5);
+            sol_beam = BS::beam_search(I, 1.0, 7);
             sol_beam.write_solution(output / "bs.txt", instance_name);
             f_beam = utils::objective(I, sol_beam);
             t4 = std::chrono::high_resolution_clock::now();
@@ -83,16 +84,16 @@ int main()
 
         if (RUN_VND)
         {
-            MaxIterations stopping(1000);
-            sol_vnd = VND::vnd(I, sol_drc, neighborhoods, StepFunction::first_improvement, stopping);
+            MaxIterations stopping(10000);
+            sol_vnd = VND::vnd(I, sol_beam, neighborhoods, StepFunction::best_improvement, stopping);
             f_vnd = utils::objective(I, sol_vnd);
             t5 = std::chrono::high_resolution_clock::now();
         }
 
         if (RUN_SA)
         {
-            MaxIterations stopping_criterion(1000);
-            sol_sa = SA::simulated_annealing(I, sol_drc, neighborhoods, 1, 0.1, 0.995, StepFunction::random_step, stopping_criterion);
+            MaxIterations stopping_criterion(10000);
+            sol_sa = SA::simulated_annealing(I, sol_beam, neighborhoods, 1, 0.1, 0.995, StepFunction::random_step, stopping_criterion);
             f_sa = utils::objective(I, sol_sa);
             t6 = std::chrono::high_resolution_clock::now();
         }
@@ -101,9 +102,10 @@ int main()
         {
             auto constructor = [&](const Instance &I)
             {
-                return GRASP::randomized_constructor_simple(I, 0.8, 0.3, 20);
+                // return RC::construction(I, 0.01);
+                return GRASP::randomized_constructor_simple(I,1.0, 0.5);
             };
-            MaxIterations stopping_outer(50);
+            MaxIterations stopping_outer(100);
             MaxIterations stopping_local(2000);
 
             sol_grasp = GRASP::grasp(
@@ -117,6 +119,26 @@ int main()
             f_grasp = utils::objective(I, sol_grasp);
             t7 = std::chrono::high_resolution_clock::now();
         }
+        if (RUN_METAGRASP)
+        {
+            auto constructor = [&](const Instance &I)
+            {
+                return RC::construction(I, 0.01);
+            };
+            MaxIterations stopping_outer(100);
+            MaxIterations stopping_local(2000);
+
+            sol_grasp = GRASP::grasp(
+                I,
+                constructor,
+                neighborhoods,
+                StepFunction::first_improvement,
+                stopping_outer,
+                stopping_local);
+
+            f_metagrasp = utils::objective(I, sol_grasp);
+            t9 = std::chrono::high_resolution_clock::now();
+        }
 
         auto ms_parser = std::chrono::duration<double, std::milli>(t1 - t0);
         auto ms_construction = std::chrono::duration<double, std::milli>(t2 - t1);
@@ -126,6 +148,7 @@ int main()
         auto ms_vnd = std::chrono::duration<double, std::milli>(t5 - t4);
         auto ms_sa = std::chrono::duration<double, std::milli>(t6 - t5);
         auto ms_grasp = std::chrono::duration<double, std::milli>(t7 - t6);
+        auto ms_metagrasp = std::chrono::duration<double, std::milli>(t9 - t7);
 
         I.printme();
 
@@ -145,6 +168,8 @@ int main()
             std::cout << "\n SA:           " << ms_sa.count();
         if (RUN_GRASP)
             std::cout << "\n GRASP:        " << ms_grasp.count();
+        if (RUN_METAGRASP)
+            std::cout << "\n META GRASP:        " << ms_metagrasp.count();
 
         std::cout << "\n\n f(constr):    " << f_drc;
 
@@ -160,6 +185,8 @@ int main()
             std::cout << "\n f(SA):        " << f_sa;
         if (RUN_GRASP)
             std::cout << "\n f(GRASP):     " << f_grasp;
+        if (RUN_METAGRASP)
+            std::cout << "\n f(METAGRASP):     " << f_metagrasp;
 
         std::cout << std::endl;
     }
