@@ -29,8 +29,7 @@ class Neighborhood
 public:
     using NeighborhoodFactory =
         std::vector<std::function<std::unique_ptr<Neighborhood>(const Instance &, const Solution &)>>;
-    const Instance &I;
-    // const Solution &sol;
+    const Instance & I;
     Solution sol;
     double f;
 
@@ -45,6 +44,11 @@ public:
     virtual Solution apply(const GenericMove &mov) const = 0;
 };
 
+
+/*
+This neighborhood represents intra route permutations. A move is a swap of two nodes. Ofc in the generic case one has 
+to check if that permutation is valid  i.e the cargo does not exceed the C of the track.
+*/
 class IntraRouteNeighborhood : public Neighborhood
 {
 public:
@@ -56,6 +60,7 @@ public:
     Solution apply(const GenericMove &mov) const override;
 };
 
+/* Move one request from one track to another*/
 class PairRelocateNeighborhood : public Neighborhood
 {
 public:
@@ -67,6 +72,12 @@ public:
     Solution apply(const GenericMove &mov) const override;
 };
 
+
+/* Flips the sequence intra route e.g 0,1,2,3,4,5
+    2-opt at i=1, 4
+    0, --4,3,2,1 --,5
+    Avoids crossings in the path.
+*/
 class TwoOptNeighborhood : public Neighborhood
 {
 public:

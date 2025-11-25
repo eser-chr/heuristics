@@ -32,3 +32,15 @@ namespace utils
 
     std::vector<double> calc_my_metric(const Instance &I, double a);
 } // namespace utils
+
+
+namespace numerical
+{
+    template <typename T>
+    std::vector<int> argsort(const std::vector<T> &org);
+};
+
+namespace gt{
+    template<typename T>
+    using Matrix = std::vector<std::vector<T>>;
+};

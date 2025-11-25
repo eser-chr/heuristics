@@ -1,7 +1,8 @@
 #include <algorithm>
 #include "neighborhoods.hpp"
 #include "utils.hpp"
-
+#include <iostream>
+// Creates a vector of info for each request in a route.
 std::vector<PickupDeliveryInfo>
 pickup_delivery_positions(const Instance &I, const std::vector<int> &route)
 {
@@ -18,15 +19,10 @@ pickup_delivery_positions(const Instance &I, const std::vector<int> &route)
         int req = I.request_of_node[node];
         if (req >= 0)
         {
-            auto &p = pos[req];
             if (I.load_change[node] > 0)
-            {
-                p.p_idx = idx; // pickup
-            }
+                pos[req].p_idx = idx;
             else
-            {
-                p.d_idx = idx; // delivery
-            }
+                pos[req].d_idx = idx;
         }
     }
 
@@ -56,7 +52,7 @@ void IntraRouteNeighborhood::generate(std::vector<GenericMove> &moves) const
         int m = (int)route.size();
         for (int k = 0; k < m; ++k)
         {
-            for (int l = k + 1; l < m; ++l)
+            for (int l = k + 1; l < m; ++l) // No for l<k+1 because of double counting.
             {
                 moves.push_back(GenericMove{1, {r, k, l}});
             }
@@ -372,15 +368,7 @@ double TwoOptNeighborhood::calc_delta(const GenericMove &mov) const
     int removed = dist[A][x] + dist[y][B];
     int added = dist[A][y] + dist[x][B];
 
-    int old_internal = 0, new_internal = 0;
-
-    for (int k = i; k + 1 <= j; ++k)
-        old_internal += dist[route[k]][route[k + 1]];
-
-    for (int k = j; k - 1 >= i; --k)
-        new_internal += dist[route[k]][route[k - 1]];
-
-    return (added - removed) + (new_internal - old_internal);
+    return (added - removed);
 }
 
 Solution TwoOptNeighborhood::apply(const GenericMove &mov) const

@@ -4,7 +4,7 @@
 Solution LS::local_search(
     const Instance &I,
     const Solution &initial_sol,
-    const std::vector<std::function<std::unique_ptr<Neighborhood>(const Instance &, const Solution &)>> &neigh_factories,
+    const Neighborhood::NeighborhoodFactory &neigh_factories, // list of lambdas kinda
     StepFunction::Func step_function,
     StoppingCriterion &criterion)
 {
@@ -16,10 +16,8 @@ Solution LS::local_search(
 
     while (!criterion(iteration, f))
     {
-
         bool improved = false;
 
-        // rebuild neighborhoods
         std::vector<std::unique_ptr<Neighborhood>> neighs;
         neighs.reserve(neigh_factories.size());
         for (auto &factory : neigh_factories)

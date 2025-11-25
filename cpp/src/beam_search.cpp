@@ -1,39 +1,38 @@
 #include <vector>
 #include <algorithm>
+#include <limits>
 #include "solvers.hpp"
 #include "utils.hpp"
 
 Solution BS::beam_search(const Instance &I, double a, int beam_width)
 {
-    int n = I.n;
-    int nK = I.nK;
-
     std::vector<double> costs = utils::calc_my_metric(I, a);
 
-    // argsort(costs)
-    std::vector<int> perm(n);
-    std::iota(perm.begin(), perm.end(), 0);
-    std::sort(perm.begin(), perm.end(),
-              [&](int i, int j)
-              { return costs[i] < costs[j]; });
+    // // argsort(costs)
+    // std::vector<int> perm(I.n);
+    // std::iota(perm.begin(), perm.end(), 0);
+    // std::sort(perm.begin(), perm.end(),
+    //           [&](int i, int j)
+    //           { return costs[i] < costs[j]; });
 
+    auto perm = numerical::argsort(costs);
     int gamma = std::min(I.gamma, I.n);
     std::vector<int> important(perm.begin(), perm.begin() + gamma);
 
     // per_track_requests
-    std::vector<std::vector<int>> per_track_requests(nK);
-    for (int t = 0; t < nK; ++t)
+    std::vector<std::vector<int>> per_track_requests(I.nK);
+    for (int t = 0; t < I.nK; ++t)
     {
-        for (int idx = t; idx < (int)important.size(); idx += nK)
+        for (int idx = t; idx < (int)important.size(); idx += I.nK)
         {
             per_track_requests[t].push_back(important[idx]);
         }
     }
 
     std::vector<std::vector<int>> routes;
-    routes.reserve(nK);
+    routes.reserve(I.nK);
 
-    for (int track = 0; track < nK; ++track)
+    for (int track = 0; track < I.nK; ++track)
     {
         std::vector<int> remaining = per_track_requests[track];
 
@@ -94,7 +93,7 @@ Solution BS::beam_search(const Instance &I, double a, int beam_width)
                 // 2) drop any active request
                 for (int req : active)
                 {
-                    int d = 1 + n + req;
+                    int d = 1 + I.n + req;
                     std::vector<int> new_route = route;
                     new_route.push_back(d);
                     int new_cargo = cargo - I.demands[req];
@@ -149,15 +148,13 @@ Solution BS::beam_search(const Instance &I, double a, int beam_width)
             std::sort(active.begin(), active.end(),
                       [&](int r1, int r2)
                       {
-                          int d1 = I.dist[last][1 + n + r1];
-                          int d2 = I.dist[last][1 + n + r2];
+                          int d1 = I.dist[last][1 + I.n + r1];
+                          int d2 = I.dist[last][1 + I.n + r2];
                           return d1 < d2;
                       });
 
             for (int req : active)
-            {
-                final_route.push_back(1 + n + req);
-            }
+                final_route.push_back(1 + I.n + req);
 
             int d = utils::route_distance(I, final_route);
             if (d < best_score)
