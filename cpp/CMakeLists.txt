@@ -17,6 +17,8 @@ add_library(core STATIC
     src/instance.cpp
     src/sa.cpp
     src/vnd.cpp
+    src/clustering.cpp
+    src/random.cpp
 )
 
 target_include_directories(core PUBLIC src/)

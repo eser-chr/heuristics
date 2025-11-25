@@ -12,31 +12,22 @@ Solution GRASP::randomized_constructor_simple(
     double alpha,
     int max_tries)
 {
-    const int n  = I.n;
-    const int nK = I.nK;
-
-    // heuristic costs
     std::vector<double> costs = utils::calc_my_metric(I, a);
-
-    // argsort(costs)
-    std::vector<int> perm(n);
-    std::iota(perm.begin(), perm.end(), 0);
-    std::sort(perm.begin(), perm.end(),
-              [&](int i, int j) { return costs[i] < costs[j]; });
+    auto perm = numerical::argsort(costs);
 
     Solution sol;
-    sol.routes.assign(nK, std::vector<int>{});
+    sol.routes.assign(I.nK, std::vector<int>{});
 
     int served = 0;
-    std::vector<bool> used(n, false);
+    std::vector<bool> used(I.n, false);
 
-    static thread_local std::mt19937 rng(std::random_device{}());
+    static std::mt19937 rng(std::random_device{}());
 
     while (served < I.gamma)
     {
         // remaining requests (not yet used)
         std::vector<int> remaining;
-        remaining.reserve(n);
+        remaining.reserve(I.n);
         for (int r : perm)
             if (!used[r])
                 remaining.push_back(r);
@@ -60,7 +51,7 @@ Solution GRASP::randomized_constructor_simple(
 
         for (int t = 0; t < max_tries; ++t)
         {
-            std::uniform_int_distribution<int> pick_route(0, nK - 1);
+            std::uniform_int_distribution<int> pick_route(0, I.nK - 1);
             int vk = pick_route(rng);
             auto &route = sol.routes[vk];
             int m = (int)route.size();
@@ -142,15 +133,13 @@ Solution GRASP::grasp(
     Solution best_sol;                         // final result
     double best_f = std::numeric_limits<double>::infinity();
 
-    int step = 0;
+    size_t step = 0;
 
-    // reset local-search stop criterion every restart
     stopping_local.reset();
     stopping_outer.reset();
     
     while (!stopping_outer(step, best_f))
     {
-        // === construct a new initial solution ===
         Solution sol0 = randomized_constructor(I);
 
         stopping_local.reset();

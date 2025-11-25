@@ -2,6 +2,7 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <optional>
 #include "instance.hpp"
 #include "solution.hpp"
 #include "utils.hpp"
@@ -26,11 +27,13 @@ pickup_delivery_positions(const Instance &I, const std::vector<int> &route);
 
 class Neighborhood
 {
+protected:
+    size_t MAX_TRIES_RANDOM = 100;
 public:
     using NeighborhoodFactory =
         std::function<std::unique_ptr<Neighborhood>(const Instance &, const Solution &)>;
-    using NeighborhoodFactories = std::vector < NeighborhoodFactory>;
-    
+    using NeighborhoodFactories = std::vector<NeighborhoodFactory>;
+
     const Instance &I;
     const Solution sol;
     double f;
@@ -41,6 +44,7 @@ public:
     virtual ~Neighborhood() = default;
 
     virtual void generate(std::vector<GenericMove> &moves) const = 0;
+    virtual std::optional<GenericMove> generate_random(std::mt19937 &rng) const = 0;
     virtual bool is_valid(const GenericMove &mov) const = 0;
     virtual double calc_delta(const GenericMove &mov) const = 0;
     virtual Solution apply(const GenericMove &mov) const = 0;
@@ -52,6 +56,7 @@ public:
     IntraRouteNeighborhood(const Instance &I_, const Solution &sol_)
         : Neighborhood(I_, sol_) {}
     void generate(std::vector<GenericMove> &moves) const override;
+    std::optional<GenericMove> generate_random(std::mt19937 &rng) const;
     bool is_valid(const GenericMove &mov) const override;
     double calc_delta(const GenericMove &mov) const override;
     Solution apply(const GenericMove &mov) const override;
@@ -63,6 +68,7 @@ public:
     PairRelocateNeighborhood(const Instance &I_, const Solution &sol_)
         : Neighborhood(I_, sol_) {}
     void generate(std::vector<GenericMove> &moves) const override;
+    std::optional<GenericMove> generate_random(std::mt19937 &rng) const;
     bool is_valid(const GenericMove &mov) const override;
     double calc_delta(const GenericMove &mov) const override;
     Solution apply(const GenericMove &mov) const override;
@@ -74,6 +80,7 @@ public:
     TwoOptNeighborhood(const Instance &I_, const Solution &sol_)
         : Neighborhood(I_, sol_) {}
     void generate(std::vector<GenericMove> &moves) const override;
+    std::optional<GenericMove> generate_random(std::mt19937 &rng) const;
     bool is_valid(const GenericMove &mov) const override;
     double calc_delta(const GenericMove &mov) const override;
     Solution apply(const GenericMove &mov) const override;

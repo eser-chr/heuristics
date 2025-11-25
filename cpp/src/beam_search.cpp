@@ -3,11 +3,50 @@
 #include <limits>
 #include "solvers.hpp"
 #include "utils.hpp"
+
 void flush_deliveries(
     const Instance &I,
     std::vector<int> &route,       // will be extended
     const std::vector<int> &active // remaining pickups (to deliver)
-);
+)
+{
+    // Copy active list because we need to erase from it locally
+    std::vector<int> remaining = active;
+
+    int last = route.empty() ? 0 : route.back();
+
+    while (!remaining.empty())
+    {
+        int best_r = -1;
+        double best_d = 1e18;
+
+        for (int r : remaining)
+        {
+            int deliver_node = 1 + I.n + r;
+            double d = I.dist[last][deliver_node];
+            if (d < best_d)
+            {
+                best_d = d;
+                best_r = r;
+            }
+        }
+
+        // Append best delivery
+        int deliver_node = 1 + I.n + best_r;
+        route.push_back(deliver_node);
+
+        // Update last
+        last = deliver_node;
+
+        // Remove delivered request
+        remaining.erase(
+            std::remove(remaining.begin(), remaining.end(), best_r),
+            remaining.end());
+    }
+}
+
+
+
 Solution BS::beam_search(const Instance &I, double a, int beam_width)
 {
     std::vector<double> costs = utils::calc_my_metric(I, a);
@@ -151,44 +190,4 @@ Solution BS::beam_search(const Instance &I, double a, int beam_width)
     Solution sol;
     sol.routes = std::move(routes);
     return sol;
-}
-void flush_deliveries(
-    const Instance &I,
-    std::vector<int> &route,       // will be extended
-    const std::vector<int> &active // remaining pickups (to deliver)
-)
-{
-    // Copy active list because we need to erase from it locally
-    std::vector<int> remaining = active;
-
-    int last = route.empty() ? 0 : route.back();
-
-    while (!remaining.empty())
-    {
-        int best_r = -1;
-        double best_d = 1e18;
-
-        for (int r : remaining)
-        {
-            int deliver_node = 1 + I.n + r;
-            double d = I.dist[last][deliver_node];
-            if (d < best_d)
-            {
-                best_d = d;
-                best_r = r;
-            }
-        }
-
-        // Append best delivery
-        int deliver_node = 1 + I.n + best_r;
-        route.push_back(deliver_node);
-
-        // Update last
-        last = deliver_node;
-
-        // Remove delivered request
-        remaining.erase(
-            std::remove(remaining.begin(), remaining.end(), best_r),
-            remaining.end());
-    }
 }

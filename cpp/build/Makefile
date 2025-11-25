@@ -179,6 +179,30 @@ src/beam_search.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/src/beam_search.cpp.s
 .PHONY : src/beam_search.cpp.s
 
+src/clustering.o: src/clustering.cpp.o
+.PHONY : src/clustering.o
+
+# target to build an object file
+src/clustering.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/src/clustering.cpp.o
+.PHONY : src/clustering.cpp.o
+
+src/clustering.i: src/clustering.cpp.i
+.PHONY : src/clustering.i
+
+# target to preprocess a source file
+src/clustering.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/src/clustering.cpp.i
+.PHONY : src/clustering.cpp.i
+
+src/clustering.s: src/clustering.cpp.s
+.PHONY : src/clustering.s
+
+# target to generate assembly for a file
+src/clustering.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/src/clustering.cpp.s
+.PHONY : src/clustering.cpp.s
+
 src/construction.o: src/construction.cpp.o
 .PHONY : src/construction.o
 
@@ -323,6 +347,30 @@ src/neighborhoods.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/src/neighborhoods.cpp.s
 .PHONY : src/neighborhoods.cpp.s
 
+src/random.o: src/random.cpp.o
+.PHONY : src/random.o
+
+# target to build an object file
+src/random.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/src/random.cpp.o
+.PHONY : src/random.cpp.o
+
+src/random.i: src/random.cpp.i
+.PHONY : src/random.i
+
+# target to preprocess a source file
+src/random.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/src/random.cpp.i
+.PHONY : src/random.cpp.i
+
+src/random.s: src/random.cpp.s
+.PHONY : src/random.s
+
+# target to generate assembly for a file
+src/random.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/src/random.cpp.s
+.PHONY : src/random.cpp.s
+
 src/sa.o: src/sa.cpp.o
 .PHONY : src/sa.o
 
@@ -457,6 +505,9 @@ help:
 	@echo "... src/beam_search.o"
 	@echo "... src/beam_search.i"
 	@echo "... src/beam_search.s"
+	@echo "... src/clustering.o"
+	@echo "... src/clustering.i"
+	@echo "... src/clustering.s"
 	@echo "... src/construction.o"
 	@echo "... src/construction.i"
 	@echo "... src/construction.s"
@@ -475,6 +526,9 @@ help:
 	@echo "... src/neighborhoods.o"
 	@echo "... src/neighborhoods.i"
 	@echo "... src/neighborhoods.s"
+	@echo "... src/random.o"
+	@echo "... src/random.i"
+	@echo "... src/random.s"
 	@echo "... src/sa.o"
 	@echo "... src/sa.i"
 	@echo "... src/sa.s"

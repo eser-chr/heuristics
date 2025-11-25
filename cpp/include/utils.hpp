@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <random>
 #include <numeric>
 #include <unordered_set>
 #include <stdexcept>
@@ -33,16 +34,21 @@ namespace utils
     std::vector<double> calc_my_metric(const Instance &I, double a);
 } // namespace utils
 
-
 namespace numerical
 {
     template <typename T>
     std::vector<int> argsort(const std::vector<T> &org);
+
+    template<typename T>
+    T select_uniformly(const std::vector<T> & org, std::mt19937 & rng);
+
+    // double calc_dist2(const gt::Coords &p1, const gt::Coords &p2);
 };
 
-namespace gt{
-    template<typename T>
+namespace gt
+{
+    template <typename T>
     using Matrix = std::vector<std::vector<T>>;
 
-    using Coords = std::pair<double, double>;
+    using Coords = std::pair < double,double>;
 };

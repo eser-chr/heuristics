@@ -38,59 +38,59 @@ bool Instance::checks()
     if (C <= 0)
         return fail("C <= 0");
 
-    // // --- structural consistency ---
-    // if ((int)coords.size() != n)
-    //     return fail("coords.size() != n (" + std::to_string(coords.size()) + " vs " + std::to_string(n) + ")");
+    // --- structural consistency ---
+    if ((int)coords.size() != 2*n+1)
+        return fail("coords.size() != n (" + std::to_string(coords.size()) + " vs " + std::to_string(n) + ")");
 
-    // if ((int)demands.size() != n)
-    //     return fail("demands.size() != n (" + std::to_string(demands.size()) + " vs " + std::to_string(n) + ")");
+    if ((int)demands.size() != n)
+        return fail("demands.size() != n (" + std::to_string(demands.size()) + " vs " + std::to_string(n) + ")");
 
-    // if ((int)dist.size() != n)
-    //     return fail("dist.size() != n (" + std::to_string(dist.size()) + " vs " + std::to_string(n) + ")");
+    if ((int)dist.size() != 2*n+1)
+        return fail("dist.size() != n (" + std::to_string(dist.size()) + " vs " + std::to_string(n) + ")");
 
-    // for (int i = 0; i < n; i++) {
-    //     if ((int)dist[i].size() != n)
-    //         return fail("dist[" + std::to_string(i) + "].size() != n");
-    // }
+    for (int i = 0; i < n; i++) {
+        if ((int)dist[i].size() != 2*n+1)
+            return fail("dist[" + std::to_string(i) + "].size() != n");
+    }
 
-    // // --- demand sanity ---
-    // for (int i = 0; i < n; i++) {
-    //     if (demands[i] < 0)
-    //         return fail("demands[" + std::to_string(i) + "] < 0");
-    //     if (demands[i] > C)
-    //         return fail("demands[" + std::to_string(i) + "] > C (" + std::to_string(demands[i]) + " > " + std::to_string(C) + ")");
-    // }
+    // --- demand sanity ---
+    for (int i = 0; i < n; i++) {
+        if (demands[i] < 0)
+            return fail("demands[" + std::to_string(i) + "] < 0");
+        if (demands[i] > C)
+            return fail("demands[" + std::to_string(i) + "] > C (" + std::to_string(demands[i]) + " > " + std::to_string(C) + ")");
+    }
 
-    // // --- gamma & nK ---
-    // if (gamma > n)
-    //     return fail("gamma > n (" + std::to_string(gamma) + " > " + std::to_string(n) + ")");
+    // --- gamma & nK ---
+    if (gamma > n)
+        return fail("gamma > n (" + std::to_string(gamma) + " > " + std::to_string(n) + ")");
 
-    // if (nK > n)
-    //     return fail("nK > n (" + std::to_string(nK) + " > " + std::to_string(n) + ")");
+    if (nK > n)
+        return fail("nK > n (" + std::to_string(nK) + " > " + std::to_string(n) + ")");
 
-    // // --- coordinate sanity ---
-    // for (int i = 0; i < n; i++) {
-    //     if (!std::isfinite(coords[i].first))
-    //         return fail("coords[" + std::to_string(i) + "].x is not finite");
-    //     if (!std::isfinite(coords[i].second))
-    //         return fail("coords[" + std::to_string(i) + "].y is not finite");
-    // }
+    // --- coordinate sanity ---
+    for (int i = 0; i < n; i++) {
+        if (!std::isfinite(coords[i].first))
+            return fail("coords[" + std::to_string(i) + "].x is not finite");
+        if (!std::isfinite(coords[i].second))
+            return fail("coords[" + std::to_string(i) + "].y is not finite");
+    }
 
-    // // --- distance matrix sanity ---
-    // for (int u = 0; u < n; u++) {
+    // --- distance matrix sanity ---
+    for (int u = 0; u < n; u++) {
 
-    //     if (dist[u][u] != 0)
-    //         return fail("dist[" + std::to_string(u) + "][" + std::to_string(u) + "] != 0");
+        if (dist[u][u] != 0)
+            return fail("dist[" + std::to_string(u) + "][" + std::to_string(u) + "] != 0");
 
-    //     for (int v = 0; v < n; v++) {
-    //         if (dist[u][v] < 0)
-    //             return fail("dist[" + std::to_string(u) + "][" + std::to_string(v) + "] < 0");
+        for (int v = 0; v < n; v++) {
+            if (dist[u][v] < 0)
+                return fail("dist[" + std::to_string(u) + "][" + std::to_string(v) + "] < 0");
 
-    //         if (dist[u][v] != dist[v][u])
-    //             return fail("dist not symmetric at ("
-    //                         + std::to_string(u) + "," + std::to_string(v) + ")");
-    //     }
-    // }
+            if (dist[u][v] != dist[v][u])
+                return fail("dist not symmetric at ("
+                            + std::to_string(u) + "," + std::to_string(v) + ")");
+        }
+    }
 
     return true;
 }

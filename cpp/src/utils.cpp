@@ -151,7 +151,6 @@ namespace utils
         return costs;
     }
 
-
 } // namespace utils
 
 namespace numerical
@@ -166,8 +165,18 @@ namespace numerical
                   { return org[i] < org[j]; });
         return perm;
     }
+
+    template<typename T>
+    T select_uniformly(const std::vector<T> & org, std::mt19937 & rng){
+        std::uniform_int_distribution<int> idx (0, org.size());
+        size_t i = idx(rng);
+        return org[i];
     
+    }
     
+
 };
-template std::vector<int> numerical::argsort<double>(const std::vector<double>&);
-template std::vector<int> numerical::argsort<int>(const std::vector<int>&);
+template std::vector<int> numerical::argsort<double>(const std::vector<double> &);
+template std::vector<int> numerical::argsort<int>(const std::vector<int> &);
+template double numerical::select_uniformly(const std::vector<double> & org, std::mt19937 & rng);
+template int numerical::select_uniformly(const std::vector<int> & org, std::mt19937 & rng);

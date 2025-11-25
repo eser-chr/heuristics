@@ -67,7 +67,7 @@ void scan_per_n(const fs::path &folder, const fs::path &csv_output)
         for (const double a : alphas)
         {
             std::cout << " alpha = " << a << std::endl;
-            auto sol = DRC::construction(I, a); // crash likely here
+            auto sol = DC::construction(I, a); // crash likely here
             auto f = utils::objective(I, sol);  // or here
             results.push_back({instance_path, a, f});
         }

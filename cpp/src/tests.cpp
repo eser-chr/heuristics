@@ -10,19 +10,19 @@
 
 int main()
 {
-    
+
     // std::string path ="/home/chris/Desktop/heuristics/heuristics/instances/2000/competition/instance61_nreq2000_nveh40_gamma1829.txt";
     // std::string path ="/home/chris/Desktop/heuristics/heuristics/instances/1000/competition/instance61_nreq1000_nveh20_gamma879.txt";
     std::string instance_name = "instance61_nreq100_nveh2_gamma91";
     std::filesystem::path base_instances = "/home/chris/Desktop/heuristics/heuristics/instances/100/competition";
-    std::filesystem::path instance_path = base_instances/(instance_name+".txt");
+    std::filesystem::path instance_path = base_instances / (instance_name + ".txt");
     std::filesystem::path output = "/home/chris/Desktop/heuristics/heuristics/results/solutions/100";
 
     bool RUN_RANDOM = true;
-    bool RUN_LS = true;
+    bool RUN_LS = false;
     bool RUN_BS = true;
     bool RUN_VND = false;
-    bool RUN_SA = false;
+    bool RUN_SA = true;
     bool RUN_GRASP = false;
 
     try
@@ -31,8 +31,8 @@ int main()
         Instance I(instance_path);
         auto t1 = std::chrono::high_resolution_clock::now();
 
-        Solution sol_drc = DRC::construction(I, 1.0);
-        sol_drc.write_solution(output/"drc.txt", instance_name);
+        Solution sol_drc = DC::construction(I, 1.0);
+        sol_drc.write_solution(output / "dc.txt", instance_name);
         double f_drc = utils::objective(I, sol_drc);
         auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -53,7 +53,7 @@ int main()
 
         if (RUN_RANDOM)
         {
-            sol_rc = DRC::construction(I, 1.0, 0.1, true);
+            sol_rc = RC::construction(I,0.05 );
             f_rc = utils::objective(I, sol_rc);
             // sol_ls.write_solution(output/"ls.txt", instance_name);
             t8 = std::chrono::high_resolution_clock::now();
@@ -69,15 +69,14 @@ int main()
                 stopping);
 
             f_ls = utils::objective(I, sol_ls);
-            sol_ls.write_solution(output/"ls.txt", instance_name);
+            sol_ls.write_solution(output / "ls.txt", instance_name);
             t3 = std::chrono::high_resolution_clock::now();
         }
-
 
         if (RUN_BS)
         {
             sol_beam = BS::beam_search(I, 1.0, 5);
-            sol_beam.write_solution(output/"bs.txt", instance_name);
+            sol_beam.write_solution(output / "bs.txt", instance_name);
             f_beam = utils::objective(I, sol_beam);
             t4 = std::chrono::high_resolution_clock::now();
         }
@@ -92,7 +91,8 @@ int main()
 
         if (RUN_SA)
         {
-            sol_sa = SA::simulated_annealing(I, sol_drc, neighborhoods);
+            MaxIterations stopping_criterion(1000);
+            sol_sa = SA::simulated_annealing(I, sol_drc, neighborhoods, 1, 0.1, 0.995, StepFunction::random_step, stopping_criterion);
             f_sa = utils::objective(I, sol_sa);
             t6 = std::chrono::high_resolution_clock::now();
         }
@@ -120,7 +120,7 @@ int main()
 
         auto ms_parser = std::chrono::duration<double, std::milli>(t1 - t0);
         auto ms_construction = std::chrono::duration<double, std::milli>(t2 - t1);
-        auto ms_random = std::chrono::duration<double, std::milli>(t8-t2);
+        auto ms_random = std::chrono::duration<double, std::milli>(t8 - t2);
         auto ms_ls = std::chrono::duration<double, std::milli>(t3 - t2);
         auto ms_bs = std::chrono::duration<double, std::milli>(t4 - t3);
         auto ms_vnd = std::chrono::duration<double, std::milli>(t5 - t4);
@@ -132,7 +132,7 @@ int main()
         std::cout << "\n Parser:       " << ms_parser.count()
                   << "\n Construction: " << ms_construction.count();
 
-        if(RUN_RANDOM)
+        if (RUN_RANDOM)
             std::cout << "\n RANDOM:           " << ms_random.count();
 
         if (RUN_LS)
@@ -148,7 +148,7 @@ int main()
 
         std::cout << "\n\n f(constr):    " << f_drc;
 
-        if(RUN_RANDOM)
+        if (RUN_RANDOM)
             std::cout << "\n f(RANDOM):        " << f_rc;
         if (RUN_BS)
             std::cout << "\n f(BS):        " << f_beam;

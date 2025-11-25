@@ -60,6 +60,44 @@ void IntraRouteNeighborhood::generate(std::vector<GenericMove> &moves) const
     }
 }
 
+std::optional<GenericMove>
+IntraRouteNeighborhood::generate_random(std::mt19937 &rng) const
+{
+    int R = (int)sol.routes.size();
+    if (R == 0) return std::nullopt;
+
+    std::uniform_int_distribution<int> route_dist(0, R - 1);
+
+    for (int tries = 0; tries < this->MAX_TRIES_RANDOM; tries++)
+    {
+        // 1) Pick a random route
+        int r = route_dist(rng);
+        const auto &route = sol.routes[r];
+        int m = (int)route.size();
+
+        // Must have at least 2 positions
+        if (m < 2) continue;
+
+        std::uniform_int_distribution<int> idx_dist(0, m - 1);
+
+        // 2) Pick random indices k < l
+        int k = idx_dist(rng);
+        int l = idx_dist(rng);
+        if (k == l) continue;
+        if (k > l) std::swap(k, l);
+
+        // 3) Build the move
+        GenericMove mvs{1, {r, k, l}};
+
+        // 4) Validate
+        if (is_valid(mvs))
+            return mvs;
+    }
+
+    return std::nullopt;
+}
+
+
 bool IntraRouteNeighborhood::is_valid(const GenericMove &mov) const
 {
     int r = mov.data[0];
@@ -157,6 +195,65 @@ void PairRelocateNeighborhood::generate(std::vector<GenericMove> &moves) const
     }
 }
 
+std::optional<GenericMove>
+PairRelocateNeighborhood::generate_random(std::mt19937 &rng) const
+{
+    int R = (int)sol.routes.size();
+    if (R < 2) return std::nullopt;
+
+    // 1) Pick r_from randomly
+    std::uniform_int_distribution<int> route_dist(0, R - 1);
+
+    for (int tries = 0; tries < this->MAX_TRIES_RANDOM; tries++)
+    {
+        int r_from = route_dist(rng);
+        const auto &routeA = sol.routes[r_from];
+
+        // Need at least one pickup-delivery pair
+        auto infos = pickup_delivery_positions(I, routeA);
+        if (infos.empty()) continue;
+
+        // 2) Choose a random pair (pickup_idx, delivery_idx)
+        std::uniform_int_distribution<int> info_dist(0, (int)infos.size() - 1);
+        const auto &info = infos[info_dist(rng)];
+
+        // 3) Pick r_to randomly, different from r_from
+        int r_to = r_from;
+        if (R > 1)
+        {
+            do {
+                r_to = route_dist(rng);
+            } while (r_to == r_from);
+        }
+
+        const auto &routeB = sol.routes[r_to];
+        int lenB = (int)routeB.size();
+        if (lenB < 0) continue;
+
+        // 4) Random insertion positions for pickup and delivery
+        std::uniform_int_distribution<int> pos_dist(0, lenB + 1); // inclusive
+
+        int p_new = pos_dist(rng);
+        std::uniform_int_distribution<int> d_dist(p_new + 1, lenB + 2); 
+        int d_new = d_dist(rng);
+
+        // 5) Build the candidate move
+        GenericMove m{
+            2,
+            { r_from, info.p_idx, info.d_idx,
+              r_to,   p_new,      d_new,
+              info.req, info.pickup_node, info.delivery_node }
+        };
+
+        // 6) Validate it
+        if (is_valid(m))
+            return m;
+    }
+
+    return std::nullopt;
+}
+
+
 bool PairRelocateNeighborhood::is_valid(const GenericMove &mov) const
 {
     int r_from = mov.data[0];
@@ -242,7 +339,7 @@ double PairRelocateNeighborhood::calc_delta(const GenericMove &mov) const
     if (d_new > (int)routeB.size())
     {
         // if out of bound, treat as worst-case big delta
-        return 1e18;
+        return std::numeric_limits<double>::infinity();
     }
     routeB.insert(routeB.begin() + d_new, dnode);
 
@@ -306,6 +403,35 @@ void TwoOptNeighborhood::generate(std::vector<GenericMove> &moves) const
         }
     }
 }
+
+std::optional<GenericMove>
+TwoOptNeighborhood::generate_random(std::mt19937& rng) const 
+{
+    if (sol.routes.empty()) return std::nullopt;
+
+    std::uniform_int_distribution<int> route_dist(0, sol.routes.size()-1);
+    int rid = route_dist(rng);
+
+    const auto& r = sol.routes[rid];
+    if (r.size() < 4) return std::nullopt;
+
+    std::uniform_int_distribution<int> idx_dist(0, r.size()-1);
+
+    for (int t = 0; t < this->MAX_TRIES_RANDOM; t++) {  // few random attempts
+        int i = idx_dist(rng);
+        int j = idx_dist(rng);
+        if (i == j) continue;
+        if (i > j) std::swap(i, j);
+
+        GenericMove m{3, {rid, i, j}};
+
+        if (is_valid(m))
+            return m;
+    }
+
+    return std::nullopt;
+}
+
 
 bool TwoOptNeighborhood::is_valid(const GenericMove &mov) const
 {

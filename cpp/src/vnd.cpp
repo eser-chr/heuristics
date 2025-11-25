@@ -15,12 +15,11 @@ Solution VND::vnd(
     Solution sol = initial_sol;
     double f = utils::objective(I, sol);
 
-    int i = 0;
-    int K = (int)neighborhood_factories.size();
+    size_t i = 0;
+    size_t K = (size_t)neighborhood_factories.size();
 
     while (i < K)
     {
-
         Neighborhood::NeighborhoodFactory single_neigh = neighborhood_factories[i];
         Solution new_sol = LS::local_search(
             I,

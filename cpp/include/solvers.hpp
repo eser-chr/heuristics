@@ -6,7 +6,8 @@
 #include "step_function.hpp"
 #include "stopping_criteria.hpp"
 
-namespace DRC // Deterministic Random Construction
+namespace DC // Deterministic Random Construction
+// We miss a good random Construction based on the K means principle
 {
 
     Solution construction(
@@ -15,6 +16,13 @@ namespace DRC // Deterministic Random Construction
         double sigma_factor = 0.1,
         bool is_random = false);
 };
+namespace RC
+{
+    Solution construction(
+        const Instance &I,
+        double lamda);
+};
+
 namespace BS
 {
     struct BeamState
@@ -47,11 +55,10 @@ namespace VND
         const Solution &initial_sol,
         const Neighborhood::NeighborhoodFactories &neighborhood_factories,
         StepFunction::Func step_function,
-        StoppingCriterion& stopping_criterion
-    );
+        StoppingCriterion &stopping_criterion);
 
 };
-namespace GRASP
+namespace GRASP // Replace with the real randomized constructor
 {
 
     Solution randomized_constructor_simple(
@@ -75,8 +82,9 @@ namespace SA
         const Instance &I,
         const Solution &initial_sol,
         const Neighborhood::NeighborhoodFactories &neighborhood_factories,
-        double T_start = 1.0,
-        double T_end = 1e-3,
-        double cooling = 0.995,
-        int max_iters = 50'000);
+        double T_start,
+        double T_end,
+        double cooling,
+        StepFunction::Func step_function,
+        StoppingCriterion &stopping_criterion);
 };
