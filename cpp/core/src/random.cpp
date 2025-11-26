@@ -179,5 +179,13 @@ Solution RC::construction(
 
     Solution sol;
     sol.routes = std::move(routes);
+    auto all_distances = utils::all_route_distances(I, sol);
+    std::vector<double> sq_distances;
+    sq_distances.resize(all_distances.size());
+    std::transform(all_distances.begin(), all_distances.end(), sq_distances.begin(), [](auto val)
+                   { return val * val; });
+    sol.total_distance = std::accumulate(all_distances.begin(), all_distances.end(), 0.0);
+
+    sol.sum_of_squares = std::accumulate(sq_distances.begin(), sq_distances.end(), 0.0 );
     return sol;
 }

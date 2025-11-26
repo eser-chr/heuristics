@@ -13,8 +13,6 @@ Another possible idea is to use a convex hull for clusters. Maybe in Python.
 #include "utils.hpp"
 #include "clusters.hpp"
 
-
-
 std::vector<int> build_route_greedy(
     const Instance &I,
     const std::vector<int> &reqs)
@@ -106,8 +104,7 @@ std::vector<int> build_route_greedy(
 }
 
 Solution DC::construction(
-    const Instance &I
-)
+    const Instance &I)
 {
 
     std::vector<int> assign = balanced_kmeans(I, 20, 20);
@@ -125,5 +122,13 @@ Solution DC::construction(
 
     Solution sol;
     sol.routes = std::move(routes);
+    auto all_distances = utils::all_route_distances(I, sol);
+    std::vector<double> sq_distances;
+    sq_distances.resize(all_distances.size());
+    std::transform(all_distances.begin(), all_distances.end(), sq_distances.begin(), [](auto val)
+                   { return val * val; });
+    sol.total_distance = std::accumulate(all_distances.begin(), all_distances.end(), 0.0);
+
+    sol.sum_of_squares = std::accumulate(sq_distances.begin(), sq_distances.end(), 0.0 );
     return sol;
 }

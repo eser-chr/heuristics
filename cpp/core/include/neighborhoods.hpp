@@ -3,6 +3,8 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <algorithm>
+#include <numeric>
 #include "instance.hpp"
 #include "solution.hpp"
 #include "utils.hpp"

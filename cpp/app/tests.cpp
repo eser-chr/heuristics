@@ -14,9 +14,9 @@ int main()
     // std::string path ="/home/chris/Desktop/heuristics/heuristics/instances/2000/competition/instance61_nreq2000_nveh40_gamma1829.txt";
     // std::string path ="/home/chris/Desktop/heuristics/heuristics/instances/1000/competition/instance61_nreq1000_nveh20_gamma879.txt";
     std::string instance_name = "instance61_nreq100_nveh2_gamma91";
-    std::filesystem::path base_instances = "/home/chris/Desktop/heuristics/heuristics/instances/100/competition";
+    std::filesystem::path base_instances = "/home/chris/Desktop/heuristics/instances/100/competition";
     std::filesystem::path instance_path = base_instances / (instance_name + ".txt");
-    std::filesystem::path output = "/home/chris/Desktop/heuristics/heuristics/results/solutions/100";
+    std::filesystem::path output = "/home/chris/Desktop/heuristics/results/solutions/100";
 
     bool RUN_RANDOM = true;
     bool RUN_LS = true;
@@ -92,7 +92,7 @@ int main()
 
         if (RUN_SA)
         {
-            MaxIterations stopping_criterion(10000);
+            MaxIterations stopping_criterion(500);
             sol_sa = SA::simulated_annealing(I, sol_beam, neighborhoods, 1, 0.1, 0.995, StepFunction::random_step, stopping_criterion);
             f_sa = utils::objective(I, sol_sa);
             t6 = std::chrono::high_resolution_clock::now();

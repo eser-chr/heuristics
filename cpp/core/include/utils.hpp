@@ -22,7 +22,7 @@ namespace utils
     std::vector<double> all_route_distances(
         const Instance &inst, const Solution &sol);
 
-    double jain_fairness(
+    double jain_fairness(Instance const & I, 
         const std::vector<double> &dists);
 
     bool check_route_feasible(

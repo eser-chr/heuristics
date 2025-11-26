@@ -42,7 +42,7 @@ namespace utils
         return res;
     }
 
-    double jain_fairness(const std::vector<double> &dists)
+    double jain_fairness(Instance const & I, const std::vector<double> &dists)
     {
         if (dists.empty())
             throw std::runtime_error("dist has length 0!");
@@ -57,7 +57,7 @@ namespace utils
         }
 
         double num = sum * sum;
-        double den = dists.size() * sq_sum;
+        double den = I.nK * sq_sum;
 
         if (den == 0.0)
         {
@@ -107,7 +107,7 @@ namespace utils
         auto dists = all_route_distances(inst, sol);
 
         double sum_dist = std::accumulate(dists.begin(), dists.end(), 0.0);
-        double fairness = jain_fairness(dists);
+        double fairness = jain_fairness(inst, dists);
 
         return sum_dist + inst.rho * (1.0 - fairness);
     }

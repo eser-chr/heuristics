@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <numeric>
 #include "neighborhoods.hpp"
 #include "utils.hpp"
 #include <iostream>
@@ -64,7 +65,8 @@ std::optional<GenericMove>
 IntraRouteNeighborhood::generate_random(std::mt19937 &rng) const
 {
     int R = (int)sol.routes.size();
-    if (R == 0) return std::nullopt;
+    if (R == 0)
+        return std::nullopt;
 
     std::uniform_int_distribution<int> route_dist(0, R - 1);
 
@@ -76,15 +78,18 @@ IntraRouteNeighborhood::generate_random(std::mt19937 &rng) const
         int m = (int)route.size();
 
         // Must have at least 2 positions
-        if (m < 2) continue;
+        if (m < 2)
+            continue;
 
         std::uniform_int_distribution<int> idx_dist(0, m - 1);
 
         // 2) Pick random indices k < l
         int k = idx_dist(rng);
         int l = idx_dist(rng);
-        if (k == l) continue;
-        if (k > l) std::swap(k, l);
+        if (k == l)
+            continue;
+        if (k > l)
+            std::swap(k, l);
 
         // 3) Build the move
         GenericMove mvs{1, {r, k, l}};
@@ -96,7 +101,6 @@ IntraRouteNeighborhood::generate_random(std::mt19937 &rng) const
 
     return std::nullopt;
 }
-
 
 bool IntraRouteNeighborhood::is_valid(const GenericMove &mov) const
 {
@@ -122,6 +126,11 @@ double IntraRouteNeighborhood::calc_delta(const GenericMove &mov) const
     int k = mov.data[1];
     int l = mov.data[2];
 
+    if (k == l)
+        return 0.0;
+    if (k > l)
+        std::swap(k, l);
+
     const auto &route = sol.routes[r];
     const auto &dist = I.dist;
 
@@ -130,20 +139,37 @@ double IntraRouteNeighborhood::calc_delta(const GenericMove &mov) const
 
     int A = (k > 0) ? route[k - 1] : 0;
     int B = (k + 1 < (int)route.size()) ? route[k + 1] : 0;
-
     int C = (l > 0) ? route[l - 1] : 0;
     int D = (l + 1 < (int)route.size()) ? route[l + 1] : 0;
 
+    int delta_d;
+
     if (l == k + 1)
     {
-        int delta =
-            dist[A][y] + dist[y][x] + dist[x][D] - dist[A][x] - dist[x][y] - dist[y][D];
-        return (double)delta;
+        delta_d =
+            dist[A][y] + dist[y][x] + dist[x][D] -
+            (dist[A][x] + dist[x][y] + dist[y][D]);
+    }
+    else
+    {
+        delta_d =
+            dist[A][y] + dist[y][B] + dist[C][x] + dist[x][D] -
+            (dist[A][x] + dist[x][B] + dist[C][y] + dist[y][D]);
     }
 
-    int delta =
-        dist[A][y] + dist[y][B] + dist[C][x] + dist[x][D] - dist[A][x] - dist[x][B] - dist[C][y] - dist[y][D];
-    return (double)delta;
+    double d_old = std::accumulate(route.begin(), route.end(), 0.0);
+    double d_new = d_old + delta_d;
+
+    double S_old = sol.total_distance;
+    double Q_old = sol.sum_of_squares;
+
+    double S_new = S_old - d_old + d_new;
+    double Q_new = Q_old - d_old * d_old + d_new * d_new;
+
+    double J_old = (S_old * S_old) / (I.nK * Q_old);
+    double J_new = (S_new * S_new) / (I.nK * Q_new);
+
+    return delta_d + I.rho * (J_old - J_new);
 }
 
 Solution IntraRouteNeighborhood::apply(const GenericMove &mov) const
@@ -154,6 +180,15 @@ Solution IntraRouteNeighborhood::apply(const GenericMove &mov) const
 
     Solution new_sol = sol;
     std::swap(new_sol.routes[r][k], new_sol.routes[r][l]);
+
+    auto all_distances = utils::all_route_distances(I, new_sol);
+    std::vector<double> sq_distances;
+    sq_distances.resize(all_distances.size());
+    std::transform(all_distances.begin(), all_distances.end(), sq_distances.begin(), [](auto val)
+                   { return val * val; });
+    new_sol.total_distance = std::accumulate(all_distances.begin(), all_distances.end(), 0.0);
+
+    new_sol.sum_of_squares = std::accumulate(sq_distances.begin(), sq_distances.end(), 0.0);
     return new_sol;
 }
 
@@ -199,7 +234,8 @@ std::optional<GenericMove>
 PairRelocateNeighborhood::generate_random(std::mt19937 &rng) const
 {
     int R = (int)sol.routes.size();
-    if (R < 2) return std::nullopt;
+    if (R < 2)
+        return std::nullopt;
 
     // 1) Pick r_from randomly
     std::uniform_int_distribution<int> route_dist(0, R - 1);
@@ -211,7 +247,8 @@ PairRelocateNeighborhood::generate_random(std::mt19937 &rng) const
 
         // Need at least one pickup-delivery pair
         auto infos = pickup_delivery_positions(I, routeA);
-        if (infos.empty()) continue;
+        if (infos.empty())
+            continue;
 
         // 2) Choose a random pair (pickup_idx, delivery_idx)
         std::uniform_int_distribution<int> info_dist(0, (int)infos.size() - 1);
@@ -221,29 +258,30 @@ PairRelocateNeighborhood::generate_random(std::mt19937 &rng) const
         int r_to = r_from;
         if (R > 1)
         {
-            do {
+            do
+            {
                 r_to = route_dist(rng);
             } while (r_to == r_from);
         }
 
         const auto &routeB = sol.routes[r_to];
         int lenB = (int)routeB.size();
-        if (lenB < 0) continue;
+        if (lenB < 0)
+            continue;
 
         // 4) Random insertion positions for pickup and delivery
         std::uniform_int_distribution<int> pos_dist(0, lenB + 1); // inclusive
 
         int p_new = pos_dist(rng);
-        std::uniform_int_distribution<int> d_dist(p_new + 1, lenB + 2); 
+        std::uniform_int_distribution<int> d_dist(p_new + 1, lenB + 2);
         int d_new = d_dist(rng);
 
         // 5) Build the candidate move
         GenericMove m{
             2,
-            { r_from, info.p_idx, info.d_idx,
-              r_to,   p_new,      d_new,
-              info.req, info.pickup_node, info.delivery_node }
-        };
+            {r_from, info.p_idx, info.d_idx,
+             r_to, p_new, d_new,
+             info.req, info.pickup_node, info.delivery_node}};
 
         // 6) Validate it
         if (is_valid(m))
@@ -252,7 +290,6 @@ PairRelocateNeighborhood::generate_random(std::mt19937 &rng) const
 
     return std::nullopt;
 }
-
 
 bool PairRelocateNeighborhood::is_valid(const GenericMove &mov) const
 {
@@ -301,54 +338,54 @@ bool PairRelocateNeighborhood::is_valid(const GenericMove &mov) const
     return true;
 }
 
-double PairRelocateNeighborhood::calc_delta(const GenericMove &mov) const
-{
-    int r_from = mov.data[0];
-    int p_old = mov.data[1];
-    int d_old = mov.data[2];
-    int r_to = mov.data[3];
-    int p_new = mov.data[4];
-    int d_new = mov.data[5];
-    int pnode = mov.data[7];
-    int dnode = mov.data[8];
+// double PairRelocateNeighborhood::calc_delta(const GenericMove &mov) const
+// {
+//     int r_from = mov.data[0];
+//     int p_old = mov.data[1];
+//     int d_old = mov.data[2];
+//     int r_to = mov.data[3];
+//     int p_new = mov.data[4];
+//     int d_new = mov.data[5];
+//     int pnode = mov.data[7];
+//     int dnode = mov.data[8];
 
-    const auto &routeA_orig = sol.routes[r_from];
-    const auto &routeB_orig = sol.routes[r_to];
+//     const auto &routeA_orig = sol.routes[r_from];
+//     const auto &routeB_orig = sol.routes[r_to];
 
-    // old total distance of the two routes
-    double old_cost =
-        (double)utils::route_distance(I, routeA_orig) +
-        (double)utils::route_distance(I, routeB_orig);
+//     // old total distance of the two routes
+//     double old_cost =
+//         (double)utils::route_distance(I, routeA_orig) +
+//         (double)utils::route_distance(I, routeB_orig);
 
-    // apply move to copies
-    auto routeA = routeA_orig;
-    auto routeB = routeB_orig;
+//     // apply move to copies
+//     auto routeA = routeA_orig;
+//     auto routeB = routeB_orig;
 
-    if (p_old < d_old)
-    {
-        routeA.erase(routeA.begin() + d_old);
-        routeA.erase(routeA.begin() + p_old);
-    }
-    else
-    {
-        routeA.erase(routeA.begin() + p_old);
-        routeA.erase(routeA.begin() + d_old);
-    }
+//     if (p_old < d_old)
+//     {
+//         routeA.erase(routeA.begin() + d_old);
+//         routeA.erase(routeA.begin() + p_old);
+//     }
+//     else
+//     {
+//         routeA.erase(routeA.begin() + p_old);
+//         routeA.erase(routeA.begin() + d_old);
+//     }
 
-    routeB.insert(routeB.begin() + p_new, pnode);
-    if (d_new > (int)routeB.size())
-    {
-        // if out of bound, treat as worst-case big delta
-        return std::numeric_limits<double>::infinity();
-    }
-    routeB.insert(routeB.begin() + d_new, dnode);
+//     routeB.insert(routeB.begin() + p_new, pnode);
+//     if (d_new > (int)routeB.size())
+//     {
+//         // if out of bound, treat as worst-case big delta
+//         return std::numeric_limits<double>::infinity();
+//     }
+//     routeB.insert(routeB.begin() + d_new, dnode);
 
-    double new_cost =
-        (double)utils::route_distance(I, routeA) +
-        (double)utils::route_distance(I, routeB);
+//     double new_cost =
+//         (double)utils::route_distance(I, routeA) +
+//         (double)utils::route_distance(I, routeB);
 
-    return new_cost - old_cost;
-}
+//     return new_cost - old_cost;
+// }
 
 Solution PairRelocateNeighborhood::apply(const GenericMove &mov) const
 {
@@ -380,7 +417,76 @@ Solution PairRelocateNeighborhood::apply(const GenericMove &mov) const
     routeB.insert(routeB.begin() + p_new, pnode);
     routeB.insert(routeB.begin() + d_new, dnode);
 
+    auto all_distances = utils::all_route_distances(I, new_sol);
+    std::vector<double> sq_distances;
+    sq_distances.resize(all_distances.size());
+    std::transform(all_distances.begin(), all_distances.end(), sq_distances.begin(), [](auto val)
+                   { return val * val; });
+    new_sol.total_distance = std::accumulate(all_distances.begin(), all_distances.end(), 0.0);
+
+    new_sol.sum_of_squares = std::accumulate(sq_distances.begin(), sq_distances.end(), 0.0);
+
     return new_sol;
+}
+
+double PairRelocateNeighborhood::calc_delta(const GenericMove &mov) const
+{
+    int r_from = mov.data[0];
+    int p_old = mov.data[1];
+    int d_old = mov.data[2];
+    int r_to = mov.data[3];
+    int p_new = mov.data[4];
+    int d_new = mov.data[5];
+    int pnode = mov.data[7];
+    int dnode = mov.data[8];
+
+    const auto &A = sol.routes[r_from];
+    const auto &B = sol.routes[r_to];
+
+    auto delta_remove = [&](const std::vector<int> &R, int idx)
+    {
+        int n = R.size();
+        int v = R[idx];
+        int L = (idx > 0) ? R[idx - 1] : 0;
+        int Rn = (idx + 1 < n) ? R[idx + 1] : 0;
+        return I.dist[L][Rn] - (I.dist[L][v] + I.dist[v][Rn]);
+    };
+
+    auto delta_insert = [&](const std::vector<int> &R, int idx, int v)
+    {
+        int n = R.size();
+        int L = (idx > 0) ? R[idx - 1] : 0;
+        int Rn = (idx < n) ? R[idx] : 0;
+        return I.dist[L][v] + I.dist[v][Rn] - I.dist[L][Rn];
+    };
+
+    int adj = (d_old < p_old) ? 1 : 0;
+
+    double delta_from = 0.0;
+    delta_from += delta_remove(A, d_old);
+    delta_from += delta_remove(A, p_old - adj);
+
+    double delta_to = 0.0;
+    delta_to += delta_insert(B, p_new, pnode);
+    delta_to += delta_insert(B, d_new, dnode);
+
+    double dA_old = std::accumulate(A.begin(), A.end(), 0.0);
+    double dB_old = std::accumulate(B.begin(), B.end(), 0.0);
+
+    double dA_new = dA_old + delta_from;
+    double dB_new = dB_old + delta_to;
+
+    double S_old = sol.total_distance;
+    double Q_old = sol.sum_of_squares;
+
+    double S_new = S_old - dA_old - dB_old + dA_new + dB_new;
+
+    double Q_new = Q_old - dA_old * dA_old + dA_new * dA_new - dB_old * dB_old + dB_new * dB_new;
+
+    double J_old = (S_old * S_old) / (I.nK * Q_old);
+    double J_new = (S_new * S_new) / (I.nK * Q_new);
+
+    return (dA_new - dA_old) + (dB_new - dB_old) + I.rho * (J_old - J_new);
 }
 
 // =====================================================================
@@ -405,23 +511,28 @@ void TwoOptNeighborhood::generate(std::vector<GenericMove> &moves) const
 }
 
 std::optional<GenericMove>
-TwoOptNeighborhood::generate_random(std::mt19937& rng) const 
+TwoOptNeighborhood::generate_random(std::mt19937 &rng) const
 {
-    if (sol.routes.empty()) return std::nullopt;
+    if (sol.routes.empty())
+        return std::nullopt;
 
-    std::uniform_int_distribution<int> route_dist(0, sol.routes.size()-1);
+    std::uniform_int_distribution<int> route_dist(0, sol.routes.size() - 1);
     int rid = route_dist(rng);
 
-    const auto& r = sol.routes[rid];
-    if (r.size() < 4) return std::nullopt;
+    const auto &r = sol.routes[rid];
+    if (r.size() < 4)
+        return std::nullopt;
 
-    std::uniform_int_distribution<int> idx_dist(0, r.size()-1);
+    std::uniform_int_distribution<int> idx_dist(0, r.size() - 1);
 
-    for (int t = 0; t < this->MAX_TRIES_RANDOM; t++) {  // few random attempts
+    for (int t = 0; t < this->MAX_TRIES_RANDOM; t++)
+    { // few random attempts
         int i = idx_dist(rng);
         int j = idx_dist(rng);
-        if (i == j) continue;
-        if (i > j) std::swap(i, j);
+        if (i == j)
+            continue;
+        if (i > j)
+            std::swap(i, j);
 
         GenericMove m{3, {rid, i, j}};
 
@@ -431,7 +542,6 @@ TwoOptNeighborhood::generate_random(std::mt19937& rng) const
 
     return std::nullopt;
 }
-
 
 bool TwoOptNeighborhood::is_valid(const GenericMove &mov) const
 {
@@ -494,7 +604,21 @@ double TwoOptNeighborhood::calc_delta(const GenericMove &mov) const
     int removed = dist[A][x] + dist[y][B];
     int added = dist[A][y] + dist[x][B];
 
-    return (added - removed);
+    double delta_d = added - removed;
+
+    double d_old = std::accumulate(route.begin(), route.end(), 0.0);
+    double d_new = d_old + delta_d;
+
+    double S_old = sol.total_distance;
+    double Q_old = sol.sum_of_squares;
+
+    double S_new = S_old - d_old + d_new;
+    double Q_new = Q_old - d_old * d_old + d_new * d_new;
+
+    double J_old = (S_old * S_old) / (I.nK * Q_old);
+    double J_new = (S_new * S_new) / (I.nK * Q_new);
+
+    return delta_d + I.rho * (J_old - J_new);
 }
 
 Solution TwoOptNeighborhood::apply(const GenericMove &mov) const
@@ -505,5 +629,15 @@ Solution TwoOptNeighborhood::apply(const GenericMove &mov) const
 
     Solution new_sol = sol;
     std::reverse(new_sol.routes[r].begin() + i, new_sol.routes[r].begin() + j + 1);
+
+    auto all_distances = utils::all_route_distances(I, new_sol);
+    std::vector<double> sq_distances;
+    sq_distances.resize(all_distances.size());
+    std::transform(all_distances.begin(), all_distances.end(), sq_distances.begin(), [](auto val)
+                   { return val * val; });
+    new_sol.total_distance = std::accumulate(all_distances.begin(), all_distances.end(), 0.0);
+
+    new_sol.sum_of_squares = std::accumulate(sq_distances.begin(), sq_distances.end(), 0.0);
+    
     return new_sol;
 }
