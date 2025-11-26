@@ -42,7 +42,7 @@ namespace utils
         return res;
     }
 
-    double jain_fairness(Instance const & I, const std::vector<double> &dists)
+    double jain_fairness(Instance const &I, const std::vector<double> &dists)
     {
         if (dists.empty())
             throw std::runtime_error("dist has length 0!");
@@ -166,17 +166,15 @@ namespace numerical
         return perm;
     }
 
-    template<typename T>
-    T select_uniformly(const std::vector<T> & org, std::mt19937 & rng){
-        std::uniform_int_distribution<int> idx (0, org.size());
+    template <typename T>
+    T select_uniformly(const std::vector<T> &org, std::mt19937 &rng)
+    {
+        std::uniform_int_distribution<int> idx(0, org.size());
         size_t i = idx(rng);
         return org[i];
-    
     }
-    
-
 };
 template std::vector<int> numerical::argsort<double>(const std::vector<double> &);
 template std::vector<int> numerical::argsort<int>(const std::vector<int> &);
-template double numerical::select_uniformly(const std::vector<double> & org, std::mt19937 & rng);
-template int numerical::select_uniformly(const std::vector<int> & org, std::mt19937 & rng);
+template double numerical::select_uniformly(const std::vector<double> &org, std::mt19937 &rng);
+template int numerical::select_uniformly(const std::vector<int> &org, std::mt19937 &rng);

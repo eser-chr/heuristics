@@ -103,14 +103,55 @@ std::vector<int> build_route_greedy(
     return route;
 }
 
+double calc_distance2(const gt::Coords &p1, const gt::Coords &p2)
+{
+    double dx = p1.first - p2.first;
+    double dy = p1.second - p2.second;
+    return dx * dx + dy * dy;
+}
+
+auto select_gamma_requests(Instance const& I){
+    std::vector<double> cost(I.n);
+
+    for (size_t i = 0; i<I.n; ++i){
+        auto pickup_coords = I.coords[1+i];
+        auto delivery_coords = I.coords[1+i+I.n];
+        cost[i] = I.demands[i] * calc_distance2(pickup_coords, delivery_coords);
+    }
+
+    auto argsort = numerical::argsort(cost);
+
+    std::vector<int> to_rtn;
+    to_rtn.reserve(I.gamma);
+    for (int k = 0; k < I.gamma; ++k)
+        to_rtn.push_back(static_cast<int>(argsort[k]));
+
+    return to_rtn;
+}
+
 Solution DC::construction(
     const Instance &I)
 {
 
-    std::vector<int> assign = balanced_kmeans(I, 20, 20);
+    auto indices_of_requests_to_serve = select_gamma_requests(I);
+
+    if(indices_of_requests_to_serve.size()!=I.gamma){
+        throw std::runtime_error("Assertion failed");
+    }
+
+
+    std::vector<int> assign = balanced_kmeans(I,indices_of_requests_to_serve, 20, 20);
     gt::Matrix<int> per_track(I.nK); // per track requests-responibilities
-    for (int r = 0; r < I.n; r++)
-        per_track[assign[r]].push_back(r);
+    // for (int r = 0; r < I.n; r++)
+    //     per_track[assign[r]].push_back(r);
+
+    for (int i = 0; i < (int)indices_of_requests_to_serve.size(); i++)
+{
+    int req = indices_of_requests_to_serve[i]; // actual request ID
+    int k   = assign[i];                       // cluster index
+    per_track[k].push_back(req);
+}
+
 
     gt::Matrix<int> routes;
     routes.reserve(I.nK);

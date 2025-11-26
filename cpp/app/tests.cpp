@@ -19,10 +19,10 @@ int main()
     std::filesystem::path output = "/home/chris/Desktop/heuristics/results/solutions/100";
 
     bool RUN_RANDOM = true;
-    bool RUN_LS = true;
     bool RUN_BS = true;
-    bool RUN_VND = true;
-    bool RUN_SA = true;
+    bool RUN_LS = true;
+    bool RUN_VND = false;
+    bool RUN_SA = false;
     bool RUN_GRASP = false;
     bool RUN_METAGRASP = false;
 
@@ -65,7 +65,7 @@ int main()
             sol_ls = LS::local_search(
                 I,
                 sol_drc,
-                neighborhoods[0],
+                neighborhoods[1],
                 StepFunction::first_improvement,
                 stopping);
 

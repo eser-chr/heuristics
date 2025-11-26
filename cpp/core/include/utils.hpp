@@ -42,7 +42,7 @@ namespace numerical
     template<typename T>
     T select_uniformly(const std::vector<T> & org, std::mt19937 & rng);
 
-    // double calc_dist2(const gt::Coords &p1, const gt::Coords &p2);
+
 };
 
 namespace gt
