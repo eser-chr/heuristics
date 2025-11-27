@@ -32,6 +32,7 @@ struct RES
     double objective;
     std::string method;
     std::string neighborhood;
+    double duration; // ms
     fs::path instance_path;
 };
 
@@ -53,6 +54,7 @@ void write_csv_results(const fs::path &output_path, const std::vector<RES> &resu
             << r.N << ","
             << r.method << ","
             << r.neighborhood << ","
+            << r.duration << ","
             << r.objective << "\n";
     }
     out.close();
@@ -91,7 +93,7 @@ ParsedPaths parse_paths(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-    std::cout<<"Enter LS"<<std::endl;
+    std::cout << "Enter LS" << std::endl;
     auto [base_instances, base_output] = parse_paths(argc, argv);
 
     // std::filesystem::path base_instances = "/home/chris/Desktop/heuristics/instances";
@@ -102,9 +104,9 @@ int main(int argc, char **argv)
     std::vector<RES> res;
     std::map<std::string, StepFunction::Func> str_to_step{
         {"first", StepFunction::first_improvement},
-        {"best", StepFunction::best_improvement},
+        // {"best", StepFunction::best_improvement},
         {"rand", StepFunction::random_step}};
-        
+
     std::map<std::string, Neighborhood::NeighborhoodFactory> neighborhoods = {
         {"intra", [](const Instance &I, const Solution &s)
          { return std::make_unique<IntraRouteNeighborhood>(I, s); }},
@@ -115,19 +117,20 @@ int main(int argc, char **argv)
         {"two-opt", [](const Instance &I, const Solution &s)
          { return std::make_unique<TwoOptNeighborhood>(I, s); }}};
 
-    MaxIterations stopping_criterion(500);
-    
+    // MaxIterations stopping_criterion(500);
+
+    ImprovementThreshold stopping_criterion(10.0);
 
     for (auto N : Ns)
     {
         std::string N_str = std::to_string(N);
-        std::cout<<"Enter "<<N_str<<std::endl;
+        std::cout << "Enter " << N_str << std::endl;
         std::filesystem::path subdir = base_instances / N_str / "test";
         auto instance_paths = get_instance_paths(subdir);
 
         for (auto const &instance : instance_paths)
         {
-            std::cout<<" -"<<std::endl;
+            std::cout << " -" << std::endl;
             Instance I(instance);
             auto dr_sol = DC::construction(I);
 
@@ -135,13 +138,16 @@ int main(int argc, char **argv)
             {
                 for (auto const &[str_neigh, neigh_factory] : neighborhoods)
                 {
+                    auto t0 = std::chrono::high_resolution_clock::now();
                     auto sol = LS::local_search(I, dr_sol, neigh_factory, stepping_function, stopping_criterion);
+                    auto t1 = std::chrono::high_resolution_clock::now();
                     auto f_sol = utils::objective(I, sol);
-                    res.push_back(RES{N, f_sol, str_step, str_neigh, instance});
+                    auto duration = std::chrono::duration<double, std::milli>(t1 - t0);
+                    res.push_back(RES{N, f_sol, str_step, str_neigh, duration.count(), instance});
                 }
             }
         }
-        std::cout<<"\n";
+        std::cout << "\n";
     }
 
     write_csv_results(base_output / "local_search_tuning.csv", res);
