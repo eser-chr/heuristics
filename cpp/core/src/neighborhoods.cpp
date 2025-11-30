@@ -338,54 +338,6 @@ bool PairRelocateNeighborhood::is_valid(const GenericMove &mov) const
     return true;
 }
 
-// double PairRelocateNeighborhood::calc_delta(const GenericMove &mov) const
-// {
-//     int r_from = mov.data[0];
-//     int p_old = mov.data[1];
-//     int d_old = mov.data[2];
-//     int r_to = mov.data[3];
-//     int p_new = mov.data[4];
-//     int d_new = mov.data[5];
-//     int pnode = mov.data[7];
-//     int dnode = mov.data[8];
-
-//     const auto &routeA_orig = sol.routes[r_from];
-//     const auto &routeB_orig = sol.routes[r_to];
-
-//     // old total distance of the two routes
-//     double old_cost =
-//         (double)utils::route_distance(I, routeA_orig) +
-//         (double)utils::route_distance(I, routeB_orig);
-
-//     // apply move to copies
-//     auto routeA = routeA_orig;
-//     auto routeB = routeB_orig;
-
-//     if (p_old < d_old)
-//     {
-//         routeA.erase(routeA.begin() + d_old);
-//         routeA.erase(routeA.begin() + p_old);
-//     }
-//     else
-//     {
-//         routeA.erase(routeA.begin() + p_old);
-//         routeA.erase(routeA.begin() + d_old);
-//     }
-
-//     routeB.insert(routeB.begin() + p_new, pnode);
-//     if (d_new > (int)routeB.size())
-//     {
-//         // if out of bound, treat as worst-case big delta
-//         return std::numeric_limits<double>::infinity();
-//     }
-//     routeB.insert(routeB.begin() + d_new, dnode);
-
-//     double new_cost =
-//         (double)utils::route_distance(I, routeA) +
-//         (double)utils::route_distance(I, routeB);
-
-//     return new_cost - old_cost;
-// }
 
 Solution PairRelocateNeighborhood::apply(const GenericMove &mov) const
 {
