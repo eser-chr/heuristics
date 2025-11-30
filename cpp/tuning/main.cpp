@@ -4,22 +4,7 @@
 #include <vector>
 #include "solvers.hpp"
 #include "utils.hpp"
-
-namespace fs = std::filesystem;
-
-auto get_instance_paths(const fs::path &folder)
-{
-    std::vector<fs::path> instances{};
-    for (const auto &entry : fs::directory_iterator(folder))
-    {
-        if (entry.is_regular_file() && entry.path().extension() == ".txt")
-        {
-            // std::cout << entry.path() << std::endl;
-            instances.push_back(entry);
-        }
-    }
-    return instances;
-}
+#include "path_utils.hpp"
 
 struct RES
 {

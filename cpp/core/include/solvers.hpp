@@ -40,7 +40,8 @@ namespace LS
         const Solution &initial_sol,
         const Neighborhood::NeighborhoodFactory &neigh_factories,
         StepFunction::Func step_function,
-        StoppingCriterion &criterion);
+        StoppingCriterion &criterion,
+        int *iteration_ptr = nullptr);
 };
 
 namespace VND
@@ -51,7 +52,8 @@ namespace VND
         const Solution &initial_sol,
         const Neighborhood::NeighborhoodFactories &neighborhood_factories,
         StepFunction::Func step_function,
-        StoppingCriterion &stopping_criterion);
+        StoppingCriterion &stopping_criterion,
+        int *iteration_ptr = nullptr);
 
 };
 namespace GRASP // Replace with the real randomized constructor
@@ -68,7 +70,8 @@ namespace GRASP // Replace with the real randomized constructor
         const Neighborhood::NeighborhoodFactories &neighborhoods,
         StepFunction::Func step_function,
         StoppingCriterion &stopping_outer,
-        StoppingCriterion &stopping_local);
+        StoppingCriterion &stopping_local,
+        int *iteration_ptr = nullptr);
 
     Solution meta_grasp( // Use of VND
         const Instance &I,
@@ -76,7 +79,8 @@ namespace GRASP // Replace with the real randomized constructor
         const Neighborhood::NeighborhoodFactories &neighborhoods,
         StepFunction::Func step_function,
         StoppingCriterion &stopping_outer,
-        StoppingCriterion &stopping_local);
+        StoppingCriterion &stopping_local,
+        int *iteration_ptr = nullptr);
 
 };
 
@@ -90,5 +94,6 @@ namespace SA
         double T_end,
         double cooling,
         StepFunction::Func step_function,
-        StoppingCriterion &stopping_criterion);
+        StoppingCriterion &stopping_criterion,
+        int *iteration_ptr = nullptr);
 };

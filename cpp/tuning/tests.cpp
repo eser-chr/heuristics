@@ -14,15 +14,15 @@ int main()
     // std::string path ="/home/chris/Desktop/heuristics/heuristics/instances/2000/competition/instance61_nreq2000_nveh40_gamma1829.txt";
     // std::string path ="/home/chris/Desktop/heuristics/heuristics/instances/1000/competition/instance61_nreq1000_nveh20_gamma879.txt";
     std::string instance_name = "instance61_nreq100_nveh2_gamma91";
-    std::filesystem::path base_instances = "/home/chris/Desktop/heuristics/instances/100/competition";
+    std::filesystem::path base_instances = "/home/christoforos.eseroglou/Desktop/heuristics/instances/100/competition";
     std::filesystem::path instance_path = base_instances / (instance_name + ".txt");
-    std::filesystem::path output = "/home/chris/Desktop/heuristics/results/solutions/100";
+    std::filesystem::path output = "/home/christoforos.eseroglou/Desktop/heuristics/results/solutions/100";
 
     bool RUN_RANDOM = true;
-    bool RUN_BS = true;
     bool RUN_LS = true;
-    bool RUN_VND = false;
-    bool RUN_SA = false;
+    bool RUN_BS = true;
+    bool RUN_VND = true;
+    bool RUN_SA = true;
     bool RUN_GRASP = false;
     bool RUN_METAGRASP = false;
 
@@ -65,7 +65,7 @@ int main()
             sol_ls = LS::local_search(
                 I,
                 sol_drc,
-                neighborhoods[1],
+                neighborhoods[0],
                 StepFunction::first_improvement,
                 stopping);
 

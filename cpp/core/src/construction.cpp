@@ -110,14 +110,12 @@ double calc_distance2(const gt::Coords &p1, const gt::Coords &p2)
     return dx * dx + dy * dy;
 }
 
-auto select_gamma_requests(Instance const &I)
-{
+auto select_gamma_requests(Instance const& I){
     std::vector<double> cost(I.n);
 
-    for (size_t i = 0; i < I.n; ++i)
-    {
-        auto pickup_coords = I.coords[1 + i];
-        auto delivery_coords = I.coords[1 + i + I.n];
+    for (size_t i = 0; i<I.n; ++i){
+        auto pickup_coords = I.coords[1+i];
+        auto delivery_coords = I.coords[1+i+I.n];
         cost[i] = I.demands[i] * calc_distance2(pickup_coords, delivery_coords);
     }
 
@@ -137,22 +135,23 @@ Solution DC::construction(
 
     auto indices_of_requests_to_serve = select_gamma_requests(I);
 
-    if (indices_of_requests_to_serve.size() != I.gamma)
-    {
+    if(indices_of_requests_to_serve.size()!=I.gamma){
         throw std::runtime_error("Assertion failed");
     }
 
-    std::vector<int> assign = balanced_kmeans(I, indices_of_requests_to_serve, 20, 20);
+
+    std::vector<int> assign = balanced_kmeans(I,indices_of_requests_to_serve, 20, 20);
     gt::Matrix<int> per_track(I.nK); // per track requests-responibilities
     // for (int r = 0; r < I.n; r++)
     //     per_track[assign[r]].push_back(r);
 
     for (int i = 0; i < (int)indices_of_requests_to_serve.size(); i++)
-    {
-        int req = indices_of_requests_to_serve[i]; // actual request ID
-        int k = assign[i];                         // cluster index
-        per_track[k].push_back(req);
-    }
+{
+    int req = indices_of_requests_to_serve[i]; // actual request ID
+    int k   = assign[i];                       // cluster index
+    per_track[k].push_back(req);
+}
+
 
     gt::Matrix<int> routes;
     routes.reserve(I.nK);
@@ -171,6 +170,6 @@ Solution DC::construction(
                    { return val * val; });
     sol.total_distance = std::accumulate(all_distances.begin(), all_distances.end(), 0.0);
 
-    sol.sum_of_squares = std::accumulate(sq_distances.begin(), sq_distances.end(), 0.0);
+    sol.sum_of_squares = std::accumulate(sq_distances.begin(), sq_distances.end(), 0.0 );
     return sol;
 }

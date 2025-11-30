@@ -7,46 +7,8 @@
 #include <algorithm>
 #include "solvers.hpp"
 #include "utils.hpp"
+#include "path_utils.hpp"
 
-namespace fs = std::filesystem;
-
-auto get_instance_paths(const fs::path &folder)
-{
-    if (!fs::exists(folder))
-        throw std::runtime_error("folder Does not exist " + folder.string());
-
-    std::vector<fs::path> instances{};
-    for (const auto &entry : fs::directory_iterator(folder))
-    {
-        if (entry.is_regular_file() && entry.path().extension() == ".txt")
-        {
-            // std::cout << entry.path() << std::endl;
-            instances.push_back(entry.path());
-        }
-    }
-    return instances;
-}
-
-auto get_some_instance_paths(const fs::path &folder, int num_of_instances)
-{
-    auto paths = get_instance_paths(folder);
-    if (num_of_instances >= paths.size())
-    {
-        return paths;
-    }
-
-    std::mt19937 rng(std::random_device{}());
-    std::vector<int> indices(paths.size());
-    std::iota(indices.begin(), indices.end(), 0);
-    std::shuffle(indices.begin(), indices.end(), rng);
-
-    std::vector<fs::path> to_return;
-    to_return.reserve(num_of_instances);
-    for (size_t i = 0; i < num_of_instances; i++)
-        to_return.push_back(paths[indices[i]]);
-
-    return to_return;
-}
 
 struct RES
 {
@@ -70,50 +32,23 @@ void write_csv_results(const fs::path &output_path, const std::vector<RES> &resu
         return;
     }
 
-    out << "path,initial,small_rho,high_rho,small_gamma,high_gamma\n";
+    out << "path,N,initial,small_rho,high_rho,small_gamma,high_gamma\n";
 
     for (const auto &r : results)
     {
         out << r.instance_path.string() << ","
+            << r.N << ","
             << r.initial << ","
             << r.small_rho << ","
             << r.high_rho << ","
             << r.small_gamma << ","
-            << r.high_rho;
+            << r.high_rho
+            <<"\n";
     }
     out.close();
 }
 
-struct ParsedPaths
-{
-    fs::path base_instances;
-    fs::path base_output;
-};
 
-ParsedPaths parse_paths(int argc, char **argv)
-{
-    if (argc != 3)
-    {
-        std::cerr << "Usage: ./run <instances_path> <output_path>\n";
-        std::exit(1);
-    }
-
-    fs::path instances = argv[1];
-    fs::path output = argv[2];
-
-    if (!fs::exists(instances) || !fs::is_directory(instances))
-    {
-        std::cerr << "Error: instances_path is not a valid directory\n";
-        std::exit(1);
-    }
-
-    if (!fs::exists(output))
-    {
-        fs::create_directories(output);
-    }
-
-    return ParsedPaths{instances, output};
-}
 
 int main(int argc, char **argv)
 {
@@ -122,11 +57,11 @@ int main(int argc, char **argv)
     // std::filesystem::path base_instances = "/home/chris/Desktop/heuristics/instances";
     // std::filesystem::path base_output = "/home/chris/Desktop/heuristics/results";
 
-    std::vector<int> Ns{50, 100, 200};
+    std::vector<int> Ns{50, 100, 200, 500, 1000};
     std::vector<RES> res;
 
     double small_rho = 0.0;
-    double high_rho = 10.0;
+    double high_rho = 1000.0;
 
     MaxIterations stopping_criterion(500);
 
@@ -143,6 +78,7 @@ int main(int argc, char **argv)
             double init_rho = I.rho;
             double init_gamma = I.gamma;
             RES tmp_res{};
+            tmp_res.N = N;
             {
                 auto sol_dc = DC::construction(I);
                 tmp_res.initial = utils::objective(I, sol_dc);
@@ -172,5 +108,5 @@ int main(int argc, char **argv)
         }
     }
 
-    write_csv_results(base_output / "local_search_tuning.csv", res);
+    write_csv_results(base_output / "dc.csv", res);
 }

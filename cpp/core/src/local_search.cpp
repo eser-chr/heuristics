@@ -7,7 +7,8 @@ Solution LS::local_search(
     const Solution &initial_sol,
     const Neighborhood::NeighborhoodFactory &neigh_factory,
     StepFunction::Func step_function,
-    StoppingCriterion &criterion)
+    StoppingCriterion &criterion,
+    int* iteration_ptr)
 {
 
     Solution sol = initial_sol; // copy
@@ -33,5 +34,9 @@ Solution LS::local_search(
         f = utils::objective(I, sol);
         ++iteration;
     }
+    if (iteration_ptr != nullptr){
+        *iteration_ptr = iteration;
+    }
+
     return sol;
 }

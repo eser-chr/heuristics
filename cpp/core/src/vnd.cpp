@@ -10,7 +10,8 @@ Solution VND::vnd(
     const Solution &initial_sol,
     const Neighborhood::NeighborhoodFactories &neighborhood_factories,
     StepFunction::Func step_function,
-    StoppingCriterion &stopping_criterion)
+    StoppingCriterion &stopping_criterion,
+    int *iteration_ptr)
 {
     Solution sol = initial_sol;
     double f = utils::objective(I, sol);
@@ -36,8 +37,10 @@ Solution VND::vnd(
             f = f_new;
             i = 0;
         }
-        
     }
+
+    if (iteration_ptr != nullptr)
+        *iteration_ptr = i;
 
     return sol;
 }

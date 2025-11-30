@@ -24,7 +24,6 @@ bool do_i_accept(double delta, double T, std::mt19937 &rng)
     return false;
 }
 
-
 Solution SA::simulated_annealing(
     const Instance &I,
     const Solution &initial_sol,
@@ -33,7 +32,8 @@ Solution SA::simulated_annealing(
     double T_end,
     double cooling,
     StepFunction::Func step_function, // Random move preferebaly
-    StoppingCriterion &stopping_criterion)
+    StoppingCriterion &stopping_criterion,
+    int *iteration_ptr )
 {
 
     static std::mt19937 rng(std::random_device{}());
@@ -50,9 +50,10 @@ Solution SA::simulated_annealing(
         std::uniform_int_distribution<int> neigh_dist(0, (int)neighborhood_factories.size() - 1);
         int idx_neigh = neigh_dist(rng);
         auto neigh = neighborhood_factories[idx_neigh](I, sol);
-        auto const& mov = step_function(*(neigh), rng);
+        auto const &mov = step_function(*(neigh), rng);
 
-        if(!mov.has_value()){
+        if (!mov.has_value())
+        {
             break;
         }
         auto actual_move = mov.value();
@@ -74,10 +75,12 @@ Solution SA::simulated_annealing(
         T *= cooling;
         i++;
     }
+    if(iteration_ptr!= nullptr){
+        *iteration_ptr = i;
+    }
 
     return best_sol;
 }
-
 
 // Solution SA::simulated_annealing(
 //     const Instance &I,

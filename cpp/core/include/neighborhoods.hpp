@@ -31,6 +31,7 @@ class Neighborhood
 {
 protected:
     size_t MAX_TRIES_RANDOM = 100;
+
 public:
     using NeighborhoodFactory =
         std::function<std::unique_ptr<Neighborhood>(const Instance &, const Solution &)>;
@@ -50,6 +51,7 @@ public:
     virtual bool is_valid(const GenericMove &mov) const = 0;
     virtual double calc_delta(const GenericMove &mov) const = 0;
     virtual Solution apply(const GenericMove &mov) const = 0;
+    virtual std::string to_str() const = 0;
 };
 
 class IntraRouteNeighborhood : public Neighborhood
@@ -62,6 +64,10 @@ public:
     bool is_valid(const GenericMove &mov) const override;
     double calc_delta(const GenericMove &mov) const override;
     Solution apply(const GenericMove &mov) const override;
+    std::string to_str() const override
+    {
+        return "IntraRoute";
+    }
 };
 
 class PairRelocateNeighborhood : public Neighborhood
@@ -74,6 +80,10 @@ public:
     bool is_valid(const GenericMove &mov) const override;
     double calc_delta(const GenericMove &mov) const override;
     Solution apply(const GenericMove &mov) const override;
+    std::string to_str() const override
+    {
+        return "PairLocate";
+    }
 };
 
 class TwoOptNeighborhood : public Neighborhood
@@ -86,4 +96,8 @@ public:
     bool is_valid(const GenericMove &mov) const override;
     double calc_delta(const GenericMove &mov) const override;
     Solution apply(const GenericMove &mov) const override;
+    std::string to_str() const override
+    {
+        return "TwoOptNeighborhood";
+    }
 };

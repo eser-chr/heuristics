@@ -7,46 +7,7 @@
 #include <algorithm>
 #include "solvers.hpp"
 #include "utils.hpp"
-
-namespace fs = std::filesystem;
-
-auto get_instance_paths(const fs::path &folder)
-{
-    if (!fs::exists(folder))
-        throw std::runtime_error("folder Does not exist " + folder.string());
-
-    std::vector<fs::path> instances{};
-    for (const auto &entry : fs::directory_iterator(folder))
-    {
-        if (entry.is_regular_file() && entry.path().extension() == ".txt")
-        {
-            // std::cout << entry.path() << std::endl;
-            instances.push_back(entry.path());
-        }
-    }
-    return instances;
-}
-
-auto get_some_instance_paths(const fs::path &folder, int num_of_instances)
-{
-    auto paths = get_instance_paths(folder);
-    if (num_of_instances >= paths.size())
-    {
-        return paths;
-    }
-
-    std::mt19937 rng(std::random_device{}());
-    std::vector<int> indices(paths.size());
-    std::iota(indices.begin(), indices.end(), 0);
-    std::shuffle(indices.begin(), indices.end(), rng);
-
-    std::vector<fs::path> to_return;
-    to_return.reserve(num_of_instances);
-    for (size_t i = 0; i < num_of_instances; i++)
-        to_return.push_back(paths[indices[i]]);
-
-    return to_return;
-}
+#include "path_utils.hpp"
 
 struct RES
 {
@@ -67,47 +28,17 @@ void write_csv_results(const fs::path &output_path, const std::vector<RES> &resu
         return;
     }
 
-    out << "path,initial,small_rho,high_rho,small_gamma,high_gamma\n";
+    out << "path,N,permutation,objective\n";
 
     for (const auto &r : results)
     {
         out << r.instance_path.string() << ","
             << r.N << ","
             << r.permutation << ","
-            << r.objective;
+            << r.objective
+            << "\n";
     }
     out.close();
-}
-
-struct ParsedPaths
-{
-    fs::path base_instances;
-    fs::path base_output;
-};
-
-ParsedPaths parse_paths(int argc, char **argv)
-{
-    if (argc != 3)
-    {
-        std::cerr << "Usage: ./run <instances_path> <output_path>\n";
-        std::exit(1);
-    }
-
-    fs::path instances = argv[1];
-    fs::path output = argv[2];
-
-    if (!fs::exists(instances) || !fs::is_directory(instances))
-    {
-        std::cerr << "Error: instances_path is not a valid directory\n";
-        std::exit(1);
-    }
-
-    if (!fs::exists(output))
-    {
-        fs::create_directories(output);
-    }
-
-    return ParsedPaths{instances, output};
 }
 
 int main(int argc, char **argv)
@@ -177,5 +108,5 @@ int main(int argc, char **argv)
         }
     }
 
-    write_csv_results(base_output / "local_search_tuning.csv", res);
+    write_csv_results(base_output / "vnd.csv", res);
 }

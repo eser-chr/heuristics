@@ -8,22 +8,7 @@
 #include <vector>
 #include "solvers.hpp"
 #include "utils.hpp"
-
-namespace fs = std::filesystem;
-
-auto get_instance_paths(const fs::path &folder)
-{
-    std::vector<fs::path> instances{};
-    for (const auto &entry : fs::directory_iterator(folder))
-    {
-        if (entry.is_regular_file() && entry.path().extension() == ".txt")
-        {
-            // std::cout << entry.path() << std::endl;
-            instances.push_back(entry.path());
-        }
-    }
-    return instances;
-}
+#include "path_utils.hpp"
 
 struct RES
 {
@@ -55,13 +40,15 @@ void write_csv_results(const fs::path &output_path, const std::vector<RES> &resu
     out.close();
 }
 
-int main()
+int main(int argc, char **argv)
 {
-    std::filesystem::path base_instances = "/home/chris/Desktop/heuristics/instances";
-    std::filesystem::path base_output = "/home/chris/Desktop/heuristics/results";
+    auto [base_instances, base_output] = parse_paths(argc, argv);
+    // std::filesystem::path base_instances = "/home/chris/Desktop/heuristics/instances";
+    // std::filesystem::path base_output = "/home/chris/Desktop/heuristics/results";
 
     std::vector<int> Ns{50, 100, 200, 500, 1000, 2000};
-    std::vector<double> lamdas{0.01, 0.03, 0.05, 0.07, 0.1, 0.15, 0.2};
+    // std::vector<double> lamdas{0.01, 0.03, 0.05, 0.07, 0.1, 0.15, 0.2};
+    double lambda = 0.2;
     std::vector<RES> res;
 
     for (auto N : Ns)
@@ -74,15 +61,11 @@ int main()
         {
             Instance I(instance);
 
-            for (auto lamda : lamdas)
-            {
-                auto sol = RC::construction(I, lamda);
-                auto f_sol = utils::objective(I, sol);
-                res.push_back(RES{instance, N, lamda, f_sol});
-            }
+            auto sol = RC::construction(I, lambda);
+            auto f_sol = utils::objective(I, sol);
+            res.push_back(RES{instance, N, lambda, f_sol});
         }
     }
 
-
-    write_csv_results(base_output/"lamda_tuning.csv", res);
+    write_csv_results(base_output / "lamda_tuning_validation.csv", res);
 }
