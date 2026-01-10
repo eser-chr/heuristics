@@ -17,7 +17,7 @@ void write_binary(const std::vector<std::vector<double>> &data, const std::strin
         std::cerr << "Error: cannot open binary file: " << filename << std::endl;
         return;
     }
-    
+
     size_t rows = data.size();
     file.write(reinterpret_cast<const char *>(&rows), sizeof(rows));
     for (const auto &row : data)
@@ -69,92 +69,60 @@ struct combo
     int bw2;
 };
 
-combo get_combo(size_t counter, std::vector<int> const &ks, 
-                std::vector<int> const &bw1s, std::vector<int> const &bw2s)
-{
-    auto Nks = ks.size();
-    auto Nbw1s = bw1s.size();
-    auto Nbw2s = bw2s.size();
-
-    size_t idx_bw2 = counter % Nbw2s;
-    size_t idx_bw1 = (counter / Nbw2s) % Nbw1s;
-    size_t idx_k = counter / (Nbw2s * Nbw1s);
-
-    return combo{ks[idx_k], bw1s[idx_bw1], bw2s[idx_bw2]};
-}
-
 int main(int argc, char **argv)
 {
     std::cout << "Start" << std::endl;
     auto [base_instances, base_output, _] = parse_paths(argc, argv);
 
     std::vector<int> Ns{50, 100, 200, 500, 1000, 2000};
-    std::vector<int> ks{2, 4, 6};
-    std::vector<int> bw1s{5, 10};
-    std::vector<int> bw2s{5, 10};
     std::vector<RES> all_res;
-    std::vector<std::vector<double>> objectives_over_time;
+
+    std::array<combo, 2> combos_to_be_tested{combo{1, 1, 1}, combo{2, 2, 2}};
 
     for (auto N : Ns)
     {
         std::string N_str = std::to_string(N);
         std::cout << "Enter " << N_str << std::endl;
-        std::filesystem::path subdir = base_instances / N_str / "train";
+        std::filesystem::path subdir = base_instances / N_str / "test";
         auto instance_paths = get_some_instance_paths(subdir, 5);
 
         for (auto const &instance : instance_paths)
         {
-            size_t total_size = ks.size() * bw1s.size() * bw2s.size();
-            
-            #pragma omp critical(cout)
+
+#pragma omp critical(cout)
             std::cout << " -" << std::endl;
-            
+
             Instance I(instance, "jain");
             auto dr_sol = DC::construction(I);
+            const size_t num_combos = combos_to_be_tested.size();
 
-            #pragma omp parallel for schedule(dynamic)
-            for (size_t counter = 0; counter < total_size; ++counter)
+#pragma omp parallel for schedule(dynamic)
+            for (size_t i = 0; i < num_combos; ++i)
             {
-                std::vector<RES> local_res;
-                std::vector<std::vector<double>> local_objectives;
+                auto const &combo = combos_to_be_tested[i];
+                auto [k, bw1, bw2] = combo;
 
-                auto [k, bw1, bw2] = get_combo(counter, ks, bw1s, bw2s);
-                std::vector<double> objective_over_time;
-
-                #pragma omp critical(cout)
-                std::cout << "Running LN: k=" << k << " bw1=" << bw1 
+#pragma omp critical(cout)
+                std::cout << "Running LN: k=" << k << " bw1=" << bw1
                           << " bw2=" << bw2 << std::endl;
 
                 Timer t;
-                auto ln_sol = LN::large_neighborhood(I, dr_sol, k, 20, bw1, bw2, &objective_over_time);
+                auto ln_sol = LN::large_neighborhood(I, dr_sol, k, 20, bw1, bw2);
                 double exec_time = t.get_time();
-                
+
                 if (!ln_sol.is_solution_feasible(I))
                 {
-                    #pragma omp critical(cout)
+#pragma omp critical(cout)
                     std::cerr << "Solution is not feasible ERROR?" << std::endl;
                 }
-                
-                double objective = utils::objective(I, ln_sol);
-                
-                RES res;
-                res.duration = exec_time;
-                res.instance_path = instance;
-                res.objective = objective;
-                res.N = N;
-                res.k = k;
-                res.bw1 = bw1;
-                res.bw2 = bw2;
-                
-                local_res.push_back(res);
-                local_objectives.push_back(objective_over_time);
 
-                #pragma omp critical(results)
+                double objective = utils::objective(I, ln_sol);
+
+                RES res{N, k, bw1, bw2, objective, exec_time, instance};
+
+#pragma omp critical(results)
                 {
-                    all_res.insert(all_res.end(), local_res.begin(), local_res.end());
-                    objectives_over_time.insert(objectives_over_time.end(), 
-                                                local_objectives.begin(), 
-                                                local_objectives.end());
+                    all_res.push_back(res);
                 }
             }
         }
@@ -162,5 +130,4 @@ int main(int argc, char **argv)
     }
 
     write_csv_results(base_output / "tuning_ln.csv", all_res);
-    write_binary(objectives_over_time, (base_output / "tuning_ln_objectives_over_time.bin").string());
 }

@@ -27,7 +27,7 @@ std::vector<int> create_track_route(Instance const &I, int beam_width, std::vect
 
     if (requests.empty())
     {
-        std::cerr << " In create_track_route -> requests were empty !!!" << std::endl;
+        // std::cerr << " In create_track_route -> requests were empty !!!" << std::endl;
         return {};
     }
 

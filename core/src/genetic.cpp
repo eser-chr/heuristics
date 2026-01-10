@@ -18,12 +18,26 @@ std::vector<Encoding> GA::generate_initial_population(Instance const &I, int k1)
     size_t size_of_dc = (size_t)k1 / 3;
     size_t counter = 0;
 
+    std::vector<Neighborhood::NeighborhoodFactory> neighborhoods = {
+        [](const Instance &I, const Solution &s)
+        { return std::make_unique<IntraRouteNeighborhood>(I, s); },
+
+        [](Instance const &I, Solution const &s)
+        { return std::make_unique<RequestMove>(I, s); },
+
+        [](const Instance &I, const Solution &s)
+        { return std::make_unique<TwoOptNeighborhood>(I, s); }};
+    ImprovementThreshold stopping_criterion((double)I.n / 10);
+    // MaxIterations stopping_criterion(1000);
+
     for (; counter < size_of_dc; counter++)
     {
         // Solution tmp = BS::beam_search(I, 0.9, 5);
 
-        Solution tmp = DC::construction(I);
-        Encoding encoding(I, tmp);
+        Solution dr_sol = DC::construction(I);
+        // Solution tmp_b = VND::vnd(I, tmp_b, )
+        auto sol_vnd = VND::vnd(I, dr_sol, neighborhoods, StepFunction::first_improvement, stopping_criterion);
+        Encoding encoding(I, sol_vnd);
         tortn.push_back(std::move(encoding));
     }
     for (; counter < k1; counter++)
@@ -83,15 +97,16 @@ std::vector<int> GA::select_indices_next_generation(Instance const &I, std::vect
     std::vector<double> objectives;
     objectives.reserve(population.size());
 
-    for(auto const& enc: population){
+    for (auto const &enc : population)
+    {
         Solution tmp = enc.to_sol(I, beam_width);
         objectives.push_back(utils::objective(I, tmp));
     }
     auto indices = numerical::argsort(objectives);
-    return std::vector<int>(indices.begin(), indices.begin()+k1);
+    return std::vector<int>(indices.begin(), indices.begin() + k1);
 }
 
-GA::BestSolution GA::get_best_solution(Instance const &I, std::vector<Encoding> const& encodings, int beam_width)
+GA::BestSolution GA::get_best_solution(Instance const &I, std::vector<Encoding> const &encodings, int beam_width)
 {
     Solution sol;
     double objective = std::numeric_limits<double>::infinity();
@@ -112,7 +127,7 @@ GA::BestSolution GA::get_best_solution(Instance const &I, std::vector<Encoding> 
     return best_sol;
 }
 
-Solution GA::genetic_algorithm(Instance const &I, int k1, int k2, int iters, int beam_width, std::vector<double>* objectives_over_time )
+Solution GA::genetic_algorithm(Instance const &I, int k1, int k2, int iters, int beam_width, std::vector<double> *objectives_over_time)
 {
     assert(beam_width > 0);
     assert(iters > 0);
@@ -141,7 +156,8 @@ Solution GA::genetic_algorithm(Instance const &I, int k1, int k2, int iters, int
 
         std::swap(population, new_population); // Delete the older data
 
-        if(objectives_over_time){
+        if (objectives_over_time)
+        {
             (*objectives_over_time).push_back(best_sol.objective);
         }
     }
