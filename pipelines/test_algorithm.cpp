@@ -42,7 +42,7 @@ void write_csv_results(const fs::path &output_path, const std::vector<RES> &resu
 
 int main(int argc, char **argv)
 {
-    std::vector<int> const Ns{50, 100, 200, 500};
+    std::vector<int> const Ns{50, 100, 200, 500, 1000};
     int const N_of_instances = 30;
 
     std::cout << "Execute algorithm comparison" << std::endl;
@@ -210,7 +210,7 @@ int main(int argc, char **argv)
                 std::cout << " LN";
 
                 Timer t;
-                auto ln_sol = LN::large_neighborhood(I, dr_sol, 4, 2, 5, 5);
+                auto ln_sol = LN::large_neighborhood(I, dr_sol, 6, 20, 10, 10);
                 double exec_time = t.get_time();
 
                 if (!ln_sol.is_solution_feasible(I))
@@ -235,7 +235,7 @@ int main(int argc, char **argv)
                 std::cout << " GA";
 
                 Timer t;
-                auto ga_sol = GA::genetic_algorithm(I, 20, 0, 20, 10);
+                auto ga_sol = GA::genetic_algorithm(I, 15, 2, 10, 10);
                 double exec_time = t.get_time();
 
                 if (!ga_sol.is_solution_feasible(I))

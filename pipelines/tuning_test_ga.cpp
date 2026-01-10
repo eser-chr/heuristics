@@ -77,14 +77,14 @@ int main(int argc, char **argv)
 
     std::vector<int> Ns{50, 100, 200, 500, 1000, 2000};
     std::vector<RES> all_res;
-    std::array<combo, 2> combos_to_be_tested{combo{1, 1, 1}, combo{2, 2, 2}};
+    std::array<combo, 2> combos_to_be_tested{combo{15, 2, 5}, combo{15, 2, 10}};
 
     for (auto N : Ns)
     {
         std::string N_str = std::to_string(N); // Now with <string>
         std::cout << "Enter " << N_str << std::endl;
         fs::path subdir = base_instances / N_str / "test"; // Use fs::
-        auto instance_paths = get_some_instance_paths(subdir, 2);
+        auto instance_paths = get_some_instance_paths(subdir, 5);
 
         for (const auto &instance : instance_paths)
         {
