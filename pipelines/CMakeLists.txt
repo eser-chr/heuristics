@@ -18,3 +18,6 @@ target_link_libraries(test_algorithm PRIVATE core OpenMP::OpenMP_CXX)
 
 add_executable(competition competition.cpp)
 target_link_libraries(competition PRIVATE core)
+
+add_executable(test_fairness_impact_ga test_fairness_impact_ga.cpp)
+target_link_libraries(test_fairness_impact_ga PRIVATE core OpenMP::OpenMP_CXX)
