@@ -53,7 +53,7 @@ std::vector<Combo> build_configs(
 
 void write_results_csv(
     const std::filesystem::path& out_path,
-    int N,
+    int N, double alpha,
     const std::vector<RaceConfig>& race)
 {
     static bool header_written = false;
@@ -64,7 +64,7 @@ void write_results_csv(
 
     if (!header_written)
     {
-        out << "N,k1,k2,beam_width,mean_objective,n_instances\n";
+        out << "N,alpha,k1,k2,beam_width,mean_objective,n_instances\n";
         header_written = true;
     }
 
@@ -77,6 +77,7 @@ void write_results_csv(
             std::accumulate(obj.begin(), obj.end(), 0.0) / obj.size();
 
         out << N << ","
+            << alpha << ","
             << r.cfg.k1 << ","
             << r.cfg.k2 << ","
             << r.cfg.beam_width << ","
@@ -196,12 +197,13 @@ int main(int argc, char** argv)
     std::vector<int> k2s{0, 1, 2, 3};
     std::vector<int> beam_widths{3,6,9,12};
 
-    // std::vector<int> Ns{100};
+    // std::vector<int> Ns{50};
     // std::vector<int> k1s{5, 10};
     // std::vector<int> k2s{0, 1,2};
     // std::vector<int> beam_widths{3};
 
     size_t n_instances = 30;
+    double alpha_eff;
     for (int N : Ns)
     {
         std::cout << "\n=== F-Race for N = " << N << " ===\n";
@@ -224,9 +226,16 @@ int main(int argc, char** argv)
             const auto& instance = instance_paths[inst_idx];
             Instance I(instance, "jain");
 
+            alpha_eff = std::max(0.25 - 0.02 * inst_idx ,0.1);
+            if (inst_idx > 14)
+                alpha_eff = 0.3;
+
+
             std::cout << "Instance " << inst_idx + 1
                       << " | Active configs: "
-                      << count_active(race) << "\n";
+                      << count_active(race) 
+                      << " | Alpha: "
+                      << alpha_eff << "\n";
 
             #pragma omp parallel for schedule(dynamic)
             for (size_t i = 0; i < race.size(); ++i)
@@ -244,7 +253,7 @@ int main(int argc, char** argv)
                 race[i].objectives.push_back(obj);
             }
 
-            double alpha_eff = std::min(0.2, 0.05 + 0.01 * inst_idx);
+            
 
             // Eliminate after at least 3 instances
             if (inst_idx > 2)
@@ -261,9 +270,10 @@ int main(int argc, char** argv)
             std::cout << " k1=" << r.cfg.k1
                       << " k2=" << r.cfg.k2
                       << " bw=" << r.cfg.beam_width 
-                      << " evaluations=" << inst_idx<< "\n";
+                      << " evaluations=" << inst_idx
+                      << " alpha=" << alpha_eff << "\n";
         }
-        write_results_csv(base_output / "frace_results.csv", N, race);
+        write_results_csv(base_output / "ga_frace_results.csv", N,alpha_eff, race);
     }
 
     return 0;
