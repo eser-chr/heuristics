@@ -207,15 +207,15 @@ int main(int argc, char **argv)
 {
     auto [base_instances, base_output, _] = parse_paths(argc, argv);
 
-    // std::vector<int> Ns{50, 100, 200, 500};
-    // std::vector<int> ks{2, 4, 6};
-    // std::vector<int> bw1s{5, 10};
-    // std::vector<int> bw2s{5, 10};
+    std::vector<int> Ns{50, 100, 200, 500};
+    std::vector<int> ks{2, 4, 6};
+    std::vector<int> bw1s{5, 10};
+    std::vector<int> bw2s{5, 10};
 
-    std::vector<int> Ns{50, 100};
-    std::vector<int> ks{2, 4};
-    std::vector<int> bw1s{1, 2};
-    std::vector<int> bw2s{3, 6};
+    // std::vector<int> Ns{50, 100};
+    // std::vector<int> ks{2, 4};
+    // std::vector<int> bw1s{1, 2};
+    // std::vector<int> bw2s{3, 6};
 
     constexpr size_t max_instances = 15;
     constexpr int K = 3;
